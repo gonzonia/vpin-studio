@@ -3,7 +3,7 @@
   <parent>
     <artifactId>studio</artifactId>
     <groupId>de.mephisto.vpin</groupId>
-    <version>4.8.0</version>
+    <version>4.8.4</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>vpin-studio-ui</artifactId>
@@ -18,10 +18,16 @@
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.10.1</version>
+        <version>3.13.0</version>
         <configuration>
-          <source>11</source>
-          <target>11</target>
+          <source>17</source>
+          <target>17</target>
+          <compilerArgs>
+            <arg>--add-exports</arg>
+            <arg>javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED</arg>
+            <arg>--add-exports</arg>
+            <arg>javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED</arg>
+          </compilerArgs>
         </configuration>
       </plugin>
       <plugin>
@@ -87,6 +93,12 @@
               <noManPages>true</noManPages>
               <stripDebug>true</stripDebug>
               <noHeaderFiles>true</noHeaderFiles>
+              <options>
+                <option>--add-exports</option>
+                <option>javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED</option>
+                <option>--add-exports</option>
+                <option>javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED</option>
+              </options>
             </configuration>
           </execution>
         </executions>
@@ -104,7 +116,7 @@
             </goals>
             <configuration>
               <headerType>gui</headerType>
-              <icon>src/main/resources/de/mephisto/vpin/ui/logo.ico</icon>
+              <icon>${project.basedir}/src/main/resources/de/mephisto/vpin/ui/logo.ico</icon>
               <outfile>target/VPin-Studio.exe</outfile>
               <jar>target/vpin-studio-ui.jar</jar>
               <errTitle>VPin-Studio</errTitle>
@@ -115,6 +127,10 @@
               </classPath>
               <jre>
                 <path>./win32/java</path>
+                <opts>
+                  <opt>--add-exports=javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED</opt>
+                  <opt>--add-exports=javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED</opt>
+                </opts>
               </jre>
               <versionInfo>
                 <fileVersion>1.0.0.0</fileVersion>
@@ -183,7 +199,7 @@
                 <resource>
                   <directory>${basedir}/../</directory>
                   <includes>
-                    <include>zulu11.72.19-ca-fx-jre11.0.23-linux_x64.tar.gz</include>
+                    <include>zulu17*.tar.gz</include>
                   </includes>
                 </resource>
               </resources>
@@ -201,7 +217,7 @@
                 <resource>
                   <directory>${basedir}/../</directory>
                   <includes>
-                    <include>zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64.tar.gz</include>
+                    <include>zulu17*macosx_aarch64.tar.gz</include>
                   </includes>
                 </resource>
               </resources>
@@ -354,7 +370,7 @@
                 <argument>a</argument>
                 <argument>-tzip</argument>
                 <argument>VPin-Studio-Client-linux-x64.zip</argument>
-                <argument>zulu11.72.19-ca-fx-jre11.0.23-linux_x64.tar.gz</argument>
+                <argument>zulu17*.tar.gz</argument>
                 <argument>vpin-studio-ui.jar</argument>
                 <argument>VPin-Studio-linux_x64.sh</argument>
                 <argument>resources/vpsdb.json</argument>
@@ -376,7 +392,7 @@
                 <argument>a</argument>
                 <argument>-tzip</argument>
                 <argument>VPin-Studio-Client-macosx_aarch64.zip</argument>
-                <argument>zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64.tar.gz</argument>
+                <argument>zulu17*macosx_aarch64.tar.gz</argument>
                 <argument>vpin-studio-ui.jar</argument>
                 <argument>VPin-Studio-macosx_aarch64.sh</argument>
                 <argument>resources/vpsdb.json</argument>
@@ -396,7 +412,7 @@
               <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
               <arguments>
                 <argument>xvf</argument>
-                <argument>zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64.tar.gz</argument>
+                <argument>zulu17*macosx_aarch64.tar.gz</argument>
               </arguments>
             </configuration>
           </execution>
@@ -417,7 +433,7 @@
               <outputDirectory>${basedir}/../Output/VPin-Studio.app/Contents/runtime/</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${basedir}/../Output/VPin-Studio/zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre/</directory>
+                  <directory>${basedir}/../Output/VPin-Studio/zulu-17.jre/</directory>
                   <includes>
                     <include>Contents</include>
                   </includes>
@@ -485,24 +501,26 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>5.8.2</version>
+      <version>5.10.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>5.8.2</version>
+      <version>5.10.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
   <properties>
-    <maven.compiler.target>11</maven.compiler.target>
-    <macOSBuild>false</macOSBuild>
-    <maven.compiler.source>11</maven.compiler.source>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javafx.version>11</javafx.version>
-    <junit.version>5.8.2</junit.version>
+    <slf4j.version>2.0.9</slf4j.version>
+    <macOSBuild>true</macOSBuild>
+    <ikonli.version>12.4.0</ikonli.version>
+    <commons-lang3.version>3.14.0</commons-lang3.version>
+    <javafx.version>17.0.18</javafx.version>
+    <junit.version>5.10.0</junit.version>
+    <jackson.version>2.16.1</jackson.version>
     <skipMacOSBuild>true</skipMacOSBuild>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <logback.version>1.4.11</logback.version>
+    <commons-io.version>2.15.1</commons-io.version>
   </properties>
 </project>

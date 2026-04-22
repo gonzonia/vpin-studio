@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -91,6 +91,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     interceptors.add(this);
 
     SimpleClientHttpRequestFactory httpRequestFactory = new SimpleClientHttpRequestFactory();
+    // In Spring 6.x, these methods have changed or might be set differently
     httpRequestFactory.setConnectTimeout(ms);
     httpRequestFactory.setReadTimeout(ms);
     restTemplate = new RestTemplate(httpRequestFactory);
