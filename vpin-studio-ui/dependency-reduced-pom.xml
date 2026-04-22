@@ -116,7 +116,7 @@
             </goals>
             <configuration>
               <headerType>gui</headerType>
-              <icon>${project.basedir}/src/main/resources/de/mephisto/vpin/ui/logo.ico</icon>
+              <icon>src/main/resources/de/mephisto/vpin/ui/logo.ico</icon>
               <outfile>target/VPin-Studio.exe</outfile>
               <jar>target/vpin-studio-ui.jar</jar>
               <errTitle>VPin-Studio</errTitle>
@@ -503,12 +503,36 @@
       <artifactId>junit-jupiter-api</artifactId>
       <version>5.10.0</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>opentest4j</artifactId>
+          <groupId>org.opentest4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>junit-platform-commons</artifactId>
+          <groupId>org.junit.platform</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>apiguardian-api</artifactId>
+          <groupId>org.apiguardian</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <version>5.10.0</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>junit-platform-engine</artifactId>
+          <groupId>org.junit.platform</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>apiguardian-api</artifactId>
+          <groupId>org.apiguardian</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <properties>
