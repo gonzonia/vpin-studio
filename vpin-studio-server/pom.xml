@@ -185,10 +185,11 @@
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.45.2.0</version>
         </dependency>
+        <!-- Correct dependency for Hibernate 6 compatible SQLiteDialect -->
         <dependency>
-            <groupId>com.enigmabridge</groupId>
-            <artifactId>hibernate4-sqlite-dialect</artifactId>
-            <version>0.1.2</version>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-community-dialects</artifactId>
+            <version>6.5.2.Final</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>

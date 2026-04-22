@@ -537,7 +537,7 @@
   </dependencies>
   <properties>
     <slf4j.version>2.0.9</slf4j.version>
-    <macOSBuild>true</macOSBuild>
+    <macOSBuild>false</macOSBuild>
     <ikonli.version>12.4.0</ikonli.version>
     <commons-lang3.version>3.14.0</commons-lang3.version>
     <javafx.version>17.0.18</javafx.version>
