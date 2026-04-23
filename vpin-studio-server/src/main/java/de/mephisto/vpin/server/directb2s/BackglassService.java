@@ -40,8 +40,8 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
@@ -610,7 +610,7 @@ public class BackglassService implements InitializingBean {
   public DirectB2S getCacheDirectB2SAndVersions(Game game) {
     if (game != null) {
       String baseName = FileUtils.baseUniqueFile(game.getGameFileName());
-      return cacheDirectB2SVersion.get(game.getEmulatorId() + "@" + baseName);
+      return cacheDirectB2SVersion.get(game.getEmulatorId() + "@" + baseName.replaceAll("\\\\", "/"));
     }
     return null;
   }
@@ -631,12 +631,12 @@ public class BackglassService implements InitializingBean {
 
   public DirectB2S removeDirectB2SAndVersions(int emulatorId, String fileName) {
     String baseName = FileUtils.baseUniqueFile(fileName);
-    return cacheDirectB2SVersion.remove(emulatorId + "@" + baseName);
+    return cacheDirectB2SVersion.remove(emulatorId + "@" + baseName.replaceAll("\\\\", "/"));
   }
 
   public void setDirectB2SAndVersions(int emulatorId, String fileName, DirectB2S b2s) {
     String baseName = FileUtils.baseUniqueFile(fileName);
-    cacheDirectB2SVersion.put(emulatorId + "@" + baseName, b2s);
+    cacheDirectB2SVersion.put(emulatorId + "@" + baseName.replaceAll("\\\\", "/"), b2s);
   }
 
   @Nullable
@@ -695,11 +695,11 @@ public class BackglassService implements InitializingBean {
 
     // update cache
     if (b2s.getNbVersions() > 0) {
-      cacheDirectB2SVersion.put(emulator.getId() + "@" + mainBaseName, b2s);
+      cacheDirectB2SVersion.put(emulator.getId() + "@" + mainBaseName.replaceAll("\\\\", "/"), b2s);
       return b2s;
     }
     else {
-      cacheDirectB2SVersion.remove(emulator.getId() + "@" + mainBaseName);
+      cacheDirectB2SVersion.remove(emulator.getId() + "@" + mainBaseName.replaceAll("\\\\", "/"));
       return null;
     }
   }
@@ -708,7 +708,7 @@ public class BackglassService implements InitializingBean {
 
   public DirectB2S rename(int emulatorId, String fileName, String newName) {
     String baseName = FileUtils.baseUniqueFile(fileName);
-    DirectB2S b2s = cacheDirectB2SVersion.get(emulatorId + "@" + baseName);
+    DirectB2S b2s = cacheDirectB2SVersion.get(emulatorId + "@" + baseName.replaceAll("\\\\", "/"));
     if (b2s != null) {
       GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
       //File parentFile = new File(emulator.getGamesDirectory(), fileName).getParentFile();
@@ -783,7 +783,7 @@ public class BackglassService implements InitializingBean {
         throw new RuntimeException("Cannot rename " + b2sFile + ", operation ignored");
       }
     }
-    return reloadDirectB2SAndVersions(emulator, fileName);
+    return reloadDirectB2SAndVersions(emulator, mainFileName);
   }
 
   public DirectB2S disable(int emulatorId, String fileName) {
@@ -802,7 +802,6 @@ public class BackglassService implements InitializingBean {
 
   public boolean deleteBackglass(int emulatorId, String filename) {
     DirectB2S b2s = removeDirectB2SAndVersions(emulatorId, filename);
-    boolean success = true;
     if (b2s != null) {
       GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
       for (String version : b2s.getVersions()) {
@@ -810,14 +809,14 @@ public class BackglassService implements InitializingBean {
         if (b2sFile.exists() && b2sFile.delete()) {
           cacheRemove(emulatorId, b2sFile);
           LOG.info("Deleted {}", b2sFile.getAbsolutePath());
+          return true;
         }
         else {
           LOG.info("Cannot delete {}", b2sFile.getAbsolutePath());
-          success = false;
         }
       }
     }
-    return success;
+    return false;
   }
 
   public DirectB2S deleteVersion(int emulatorId, String filename) {
