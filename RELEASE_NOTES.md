@@ -21,7 +21,7 @@
 - **Zen Studio Tables**:
     - Disabled auto-update of missing tables. For a reason not yet identified, duplicates were being created for some Pinball FX users.
     - The table overview now shows the file name (e.g. "Table_123") as the ROM name.
-- **NVOffset Validation**: The NVOffset validator has been updated to trigger for every table that shares its ROM with another table **and has a different VPS table ID (NOT VPS table version)**. For example, the validator is not triggered if you have 5 different versions of "Attack From Mars" all using the same ROM ÔÇö only if a different table is also using that ROM.
+- **NVOffset Validation**: The NVOffset validator has been updated to trigger for every table that shares its ROM with another table **and has a different VPS table ID (NOT VPS table version)**. For example, the validator is not triggered if you have 5 different versions of "Attack From Mars" all using the same ROM, only if a different table is also using that ROM.
 - **ALT Sounds**: Fixed the upload button in the sidebar.
 - **VPin MAME**: Fixed saving of VPin MAME default preferences for the **Compact Display** and **Double DisplaySize** values.
 - **Pause Menu**: Fixed the orientation of "Desktop Mode" playfield screenshots.
@@ -39,6 +39,7 @@
 - **Future Pinball**: Fixed import of FP tables, which was accidentally disabled.
 - **DOFLinx**: Fixed the auto-installer, which now also checks .exe files to determine if the latest version on GitHub is newer than the installed one.
 - **iScored**: Fixed game room deletion. When a game room is deleted, all associated competitions, their wheels, and TourneyIds are now reset.
+- **Emulators Setup**: Fixed emulator tabs for pinballX
 - **Preferences Menu**: Added natural order for hooks.
 - **Table Statistics**: Fixed "Last Played" timestamps.
 - **Misc**: Added a cleanup check to the server that removes orphaned game entries which exist only in the Studio and not in the frontend (if available). This handles the case where a game was removed using the original frontend admin tool.
