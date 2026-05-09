@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.server.assets.TableAssetSourcesService;
 import de.mephisto.vpin.server.assets.TableAssetsService;
@@ -100,10 +101,11 @@ public class GameMediaResource {
     return search;
   }
 
-  @PostMapping("/assets/download/{gameId}/{screen}/{append}")
+  @PostMapping("/assets/download/{gameId}/{screen}/{append}/{loadingScreenId}")
   public boolean downloadTableAsset(@PathVariable("gameId") int gameId,
                                     @PathVariable("screen") VPinScreen screen,
                                     @PathVariable("append") boolean append,
+                                    @PathVariable("loadingScreenId") VPinScreen loadingScreenId,
                                     @RequestBody TableAsset asset) throws Exception {
     try {
       LOG.info("Starting download of {}(appending: {})", asset.getName(), append);
@@ -119,6 +121,16 @@ public class GameMediaResource {
         else if (MimeTypeUtil.isVideo(asset.getMimeType())) {
           mediaConverterService.rotateVideo180(target);
         }
+      }
+
+      //the loading screen is the default, so we are only interested in other screen assignments
+      if (VPinScreen.Loading.equals(screen) && !VPinScreen.Loading.equals(loadingScreenId)) {
+        String name = target.getName();
+        String baseName = FilenameUtils.getBaseName(name);
+        baseName = FileUtils.baseUniqueFile(baseName);
+        String suffix = FilenameUtils.getExtension(name);
+        String updatedTargetName = baseName + "(SCREEN" + loadingScreenId.getCode() + ")." + suffix;
+        return target.renameTo(new File(target.getParentFile(), updatedTargetName));
       }
 
       return true;
@@ -182,7 +194,8 @@ public class GameMediaResource {
           status = HttpStatus.PARTIAL_CONTENT;
           response.setHeader("Content-Range", "bytes " + start + "-" + end + "/" + contentLength);
           contentLength = end - start + 1;
-        } else {
+        }
+        else {
           start = -1;
         }
       }
@@ -194,12 +207,12 @@ public class GameMediaResource {
     response.setHeader("Cache-Control", "public, max-age=36000");
     response.setHeader("Accept-Ranges", "bytes");
 
-    if (start >= 0) {
-      LOG.info("Processing {} method, Length={}, range {}-{}", request.getMethod(), contentLength, start, end);
-    }
-    else {
-      LOG.info("Processing {} method, Length={}", request.getMethod(), contentLength);
-    }
+//    if (start >= 0) {
+//      LOG.info("Processing {} method, Length={}, range {}-{}", request.getMethod(), contentLength, start, end);
+//    }
+//    else {
+//      LOG.info("Processing {} method, Length={}", request.getMethod(), contentLength);
+//    }
 
     // For HEAD, do not write the body
     if ("HEAD".equals(request.getMethod())) {
@@ -251,7 +264,8 @@ public class GameMediaResource {
       else {
         frontendMediaItem = frontendMedia.getDefaultMediaItem(screen);
       }
-    } else {
+    }
+    else {
       frontendMediaItem = null;
     }
 
@@ -259,8 +273,7 @@ public class GameMediaResource {
   }
 
   private void downloadFrontendMediaItem(HttpServletResponse response, HttpServletRequest request, int id, String name,
-      boolean preview, final FrontendMediaItem frontendMediaItem) throws IOException 
-  {
+                                         boolean preview, final FrontendMediaItem frontendMediaItem) throws IOException {
     if (frontendMediaItem == null) {
       throw new ResponseStatusException(NOT_FOUND);
     }
@@ -300,7 +313,8 @@ public class GameMediaResource {
           status = HttpStatus.PARTIAL_CONTENT;
           response.setHeader("Content-Range", "bytes " + start + "-" + end + "/" + contentLength);
           contentLength = end - start + 1;
-        } else {
+        }
+        else {
           start = -1;
         }
       }

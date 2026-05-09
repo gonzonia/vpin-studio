@@ -9,10 +9,7 @@ import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.restclient.assets.AssetMetaData;
 import de.mephisto.vpin.restclient.converter.MediaConversionCommand;
-import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.frontend.TableAssetSearch;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -355,18 +352,18 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private void onAudioBlank() {
     JFXFuture.supplyAsync(() -> {
-      int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
-      return client.getGameMediaService().addBlank(objectId, isPlaylistMode(), screen);
-    })
-    .thenAcceptLater(status -> {
-      if (isGameMode()) {
-        EventManager.getInstance().notifyTableChange(game.getId(), null, game.getGameName());
-      }
-      refreshTableMediaView();
-    })
-    .onErrorLater(e -> {
-      WidgetFactory.showAlert(localStage, "Error", "Adding blank media failed: " + e.getMessage());
-    });
+          int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
+          return client.getGameMediaService().addBlank(objectId, isPlaylistMode(), screen);
+        })
+        .thenAcceptLater(status -> {
+          if (isGameMode()) {
+            EventManager.getInstance().notifyTableChange(game.getId(), null, game.getGameName());
+          }
+          refreshTableMediaView();
+        })
+        .onErrorLater(e -> {
+          WidgetFactory.showAlert(localStage, "Error", "Adding blank media failed: " + e.getMessage());
+        });
   }
 
   @FXML
@@ -388,14 +385,16 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     JFXFuture.supplyAsync(() -> {
       if (isPlaylistMode()) {
         return client.getFrontendService().getPlaylistMediaDirectory(this.playlist.getId(), screen);
-      } else if (isGameMode()) {
+      }
+      else if (isGameMode()) {
         return client.getFrontendService().getMediaDirectory(this.game.getId(), screen);
-      } else {
+      }
+      else {
         return null;
       }
     }).thenAcceptLater(screenDir -> {
       if (screenDir != null) {
-        if(selectedItem != null) {
+        if (selectedItem != null) {
           screenDir = new File(screenDir, selectedItem.getName());
           SystemUtil.openFile(screenDir);
           return;
@@ -522,26 +521,26 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           "Current default asset file will be automatically renamed.");
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
         JFXFuture.supplyAsync(() -> {
-          int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
-          return client.getGameMediaService().setDefaultMedia(objectId, isPlaylistMode(), screen, selectedItem.getName());
-        })
-        .thenAcceptLater(status -> {
-          if (!status) {
-            WidgetFactory.showAlert(localStage, "Warning",
-                "Coundl't set default asset for " + getGameOrPlaylistName() + ".",
-                "Please check the asset files as they may be in an inconsistent state.");
+              int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
+              return client.getGameMediaService().setDefaultMedia(objectId, isPlaylistMode(), screen, selectedItem.getName());
+            })
+            .thenAcceptLater(status -> {
+              if (!status) {
+                WidgetFactory.showAlert(localStage, "Warning",
+                    "Coundl't set default asset for " + getGameOrPlaylistName() + ".",
+                    "Please check the asset files as they may be in an inconsistent state.");
 
-          }
-          if (isGameMode()) {
-            EventManager.getInstance().notifyTableChange(game.getId(), null, game.getGameName());
-          }
-          onReload();
-        })
-        .onErrorLater(e -> {
-          WidgetFactory.showAlert(localStage, "Error",
-              "An error occurred while setting default asset for " + getGameOrPlaylistName() + "\".",
-              e.getMessage());
-        });
+              }
+              if (isGameMode()) {
+                EventManager.getInstance().notifyTableChange(game.getId(), null, game.getGameName());
+              }
+              onReload();
+            })
+            .onErrorLater(e -> {
+              WidgetFactory.showAlert(localStage, "Error",
+                  "An error occurred while setting default asset for " + getGameOrPlaylistName() + "\".",
+                  e.getMessage());
+            });
       }
     }
   }
@@ -573,19 +572,19 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
         final String newName = s;
         JFXFuture.supplyAsync(() -> {
-          int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
-          return client.getGameMediaService().renameMedia(objectId, isPlaylistMode(), screen, selectedItem.getName(), newName);
-        })
-        .thenAcceptLater(status -> {
-          if (isGameMode()) {
-            EventManager.getInstance().notifyTableChange(game.getId(), null, game.getGameName());
-          }
-          onReload();
-        })
-        .onErrorLater(e -> {
-          LOG.error("Renaming table asset failed: " + e.getMessage(), e);
-          WidgetFactory.showAlert(localStage, "Error", "Renaming failed: " + e.getMessage());
-        });
+              int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
+              return client.getGameMediaService().renameMedia(objectId, isPlaylistMode(), screen, selectedItem.getName(), newName);
+            })
+            .thenAcceptLater(status -> {
+              if (isGameMode()) {
+                EventManager.getInstance().notifyTableChange(game.getId(), null, game.getGameName());
+              }
+              onReload();
+            })
+            .onErrorLater(e -> {
+              LOG.error("Renaming table asset failed: " + e.getMessage(), e);
+              WidgetFactory.showAlert(localStage, "Error", "Renaming failed: " + e.getMessage());
+            });
       }
       else if (!StringUtils.isEmpty(s) && !FileUtils.isValidFilename(s)) {
         WidgetFactory.showAlert(localStage, "Error", "Renaming cancelled, invalid character found.");
@@ -687,6 +686,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     ObservableList<FrontendMediaItemRepresentation> items = assetList.getItems();
     String targetName = name + "." + FilenameUtils.getExtension(tableAsset.getName());
     boolean alreadyExists = items.stream().anyMatch(i -> i.getName().equalsIgnoreCase(targetName));
+    VPinScreen loadingScreenId = VPinScreen.Loading;
     if (alreadyExists) {
       Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(localStage, "Asset Exists",
           "An asset with the same name already exists.",
@@ -696,6 +696,13 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
       else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
         append = true;
+
+        if (screen.equals(VPinScreen.Loading) && client.getFrontendService().getFrontendType().equals(FrontendType.Popper)) {
+          VPinScreen vPinScreen = TableDialogs.openAssetScreenAssignmentDialog();
+          if (vPinScreen != null) {
+            loadingScreenId = vPinScreen;
+          }
+        }
       }
       else {
         return;
@@ -706,7 +713,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       ProgressDialog.createProgressDialog(stage, new TableAssetDownloadProgressModel(stage, screen, playlist, tableAsset, append));
     }
     else {
-      ProgressDialog.createProgressDialog(stage, new TableAssetDownloadProgressModel(stage, screen, game, tableAsset, append));
+      ProgressDialog.createProgressDialog(stage, new TableAssetDownloadProgressModel(stage, screen, game, tableAsset, append, loadingScreenId));
     }
 
     if (isGameMode()) {
@@ -1000,9 +1007,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
               name = "Video Conversion " + "\"" + selectedItems.getFirst().getName() + "\"";
             }
 
-            int objectId = isPlaylistMode() ? playlist.getId(): game.getId();
+            int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
             ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(
-              new MediaConversionProgressModel(name, objectId, isPlaylistMode(), screen, selectedItems, command));
+                new MediaConversionProgressModel(name, objectId, isPlaylistMode(), screen, selectedItems, command));
             List<Object> results = progressDialog.getResults();
 
             Platform.runLater(() -> {
@@ -1103,6 +1110,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   public boolean isPlaylistMode() {
     return playlistsRadio != null && playlistsRadio.isSelected() && this.playlist != null;
   }
+
   public boolean isGameMode() {
     return !isPlaylistMode() && game != null;
   }

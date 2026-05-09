@@ -240,35 +240,37 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         return games;
     }
 
-    private List<Game> getVpxGames() {
-        List<GameDetails> all = gameDetailsRepositoryService.findAll();
-        Map<Integer, GameDetails> mappedGameDetails = new LinkedHashMap<>();
-        for (GameDetails gameDetails : all) {
-            mappedGameDetails.put(gameDetails.getPupId(), gameDetails);
-        }
-        List<Game> games = new ArrayList<>();
-        List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
-        for (GameEmulator gameEmulator : gameEmulators) {
-            if (gameEmulator.isEnabled()) {
-                GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, mappedGameDetails));
-                games.addAll(emulatorCache.getGames());
-            }
-        }
-        return games;
+  private List<Game> getVpxGames() {
+    List<GameDetails> all = gameDetailsRepositoryService.findAll();
+    Map<Integer, GameDetails> mappedGameDetails = new LinkedHashMap<>();
+    for (GameDetails gameDetails : all) {
+      mappedGameDetails.put(gameDetails.getPupId(), gameDetails);
     }
+    List<Game> games = new ArrayList<>();
+    List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
+    for (GameEmulator gameEmulator : gameEmulators) {
+      if (gameEmulator.isEnabled()) {
+        GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, mappedGameDetails));
+        emulatorCache.drainPendingNewGameIds().forEach(id -> gameLifecycleService.notifyGameCreated(id));
+        games.addAll(emulatorCache.getGames());
+      }
+    }
+    return games;
+  }
 
 
-    private List<Game> getZenGames() {
-        List<Game> games = new ArrayList<>();
-        List<GameEmulator> gameEmulators = emulatorService.getZenGameEmulators();
-        for (GameEmulator gameEmulator : gameEmulators) {
-            if (gameEmulator.isEnabled()) {
-                GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, Collections.emptyMap()));
-                games.addAll(emulatorCache.getGames());
-            }
-        }
-        return games;
+  private List<Game> getZenGames() {
+    List<Game> games = new ArrayList<>();
+    List<GameEmulator> gameEmulators = emulatorService.getZenGameEmulators();
+    for (GameEmulator gameEmulator : gameEmulators) {
+      if (gameEmulator.isEnabled()) {
+        GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, Collections.emptyMap()));
+        emulatorCache.drainPendingNewGameIds().forEach(id -> gameLifecycleService.notifyGameCreated(id));
+        games.addAll(emulatorCache.getGames());
+      }
     }
+    return games;
+  }
 
     private GameEmulatorCache fetchEmulatorGames(@NonNull GameEmulator emulator, @NonNull Map<Integer, GameDetails> mappedGameDetails) {
         long start = System.currentTimeMillis();
@@ -287,31 +289,36 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
                 .map(game -> applyGameDetails(game, false, false, resolvedMap.get(game.getId())))
                 .toList();
 
-        boolean killFrontend = false;
-        for (GameDetailsInfo info : infos) {
-            if (info.newGame) {
-                gameLifecycleService.notifyGameCreated(info.game.getId());
-                highscoreService.scanScore(info.game, EventOrigin.INITIAL_SCAN);
-                if (!killFrontend) {
-                    LOG.info("New games have been found, automatically killing frontend to release locks.");
-                    frontendService.killFrontend();
-                    killFrontend = true;
-                }
-            }
+    boolean killFrontend = false;
+    for (GameDetailsInfo info : infos) {
+      if (info.newGame) {
+        // notifyGameCreated is deferred to after computeIfAbsent to avoid recursive ConcurrentHashMap update
+        highscoreService.scanScore(info.game, EventOrigin.INITIAL_SCAN);
+        if (!killFrontend) {
+          LOG.info("New games have been found, automatically killing frontend to release locks.");
+          frontendService.killFrontend();
+          killFrontend = true;
         }
+      }
+    }
 
         infos.parallelStream().forEach(info -> applyGameValidation(info, findFirstIssueOnly));
 
 
-        GameEmulatorCache cache = new GameEmulatorCache(emulator.getType(), emulator.getId(), gamesByEmulator);
-        long duration = System.currentTimeMillis() - start;
-        long avg = 0;
-        if (!gamesByEmulator.isEmpty()) {
-            avg = duration / gamesByEmulator.size();
-        }
-        LOG.info("Game fetch for emulator {} took {}ms / {} games / {}ms avg.", emulator.getName(), duration, gamesByEmulator.size(), avg);
-        return cache;
+    GameEmulatorCache cache = new GameEmulatorCache(emulator.getType(), emulator.getId(), gamesByEmulator);
+    for (GameDetailsInfo info : infos) {
+      if (info.newGame) {
+        cache.addPendingNewGameId(info.game.getId());
+      }
     }
+    long duration = System.currentTimeMillis() - start;
+    long avg = 0;
+    if (!gamesByEmulator.isEmpty()) {
+      avg = duration / gamesByEmulator.size();
+    }
+    LOG.info("Game fetch for emulator {} took {}ms / {} games / {}ms avg.", emulator.getName(), duration, gamesByEmulator.size(), avg);
+    return cache;
+  }
 
     private GameDetailsInfo applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan, @Nullable GameDetails gameDetails) {
         if (gameDetails == null) {
