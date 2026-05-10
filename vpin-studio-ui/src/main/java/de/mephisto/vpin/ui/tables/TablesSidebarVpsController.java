@@ -46,6 +46,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -383,7 +385,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     playersLabel.setText(String.valueOf(vpsTable.getPlayers()));
     ipdbLink.setText(vpsTable.getIpdbUrl());
     ipdbLink.setDisable(StringUtils.isEmpty(vpsTable.getIpdbUrl()) || !vpsTable.getIpdbUrl().startsWith("http"));
-    updatedLabel.setText(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(new Date(vpsTable.getUpdatedAt()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate()));
+    updatedLabel.setText(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(Instant.ofEpochMilli(vpsTable.getUpdatedAt()).atZone(ZoneId.systemDefault()).toLocalDate()));
 
     boolean doFilter = filterCheckbox.isSelected();
 
@@ -588,8 +590,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   private void refreshSheetData(List<VpsTable> tables) {
     entriesLabel.setText(String.valueOf(tables.size()));
-    Date changeDate = client.getVpsService().getChangeDate();
-    updateDateLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(changeDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()));
+    OffsetDateTime changeDate = client.getVpsService().getChangeDate();
+    updateDateLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(changeDate));
   }
 
   @Override

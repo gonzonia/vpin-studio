@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.vpxz;
 
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.preferences.VPXZSettings;
@@ -22,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
 public class VPXZCreationJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(VPXZCreationJob.class);
@@ -59,7 +60,7 @@ public class VPXZCreationJob implements Job {
     VPXZDescriptor descriptor = new VPXZDescriptor();
     VPXZPackageInfo packageInfo = new VPXZPackageInfo();
 
-    descriptor.setCreatedAt(OffsetDateTime.now());
+    descriptor.setCreatedAt(Instant.now());
     descriptor.setTableDetails(tableDetails);
     descriptor.setPackageInfo(packageInfo);
 
@@ -108,10 +109,13 @@ public class VPXZCreationJob implements Job {
         }
       }, game, tableDetails);
 
-        JsonMapper objectMapper =JsonMapper.builder()
-                .enable(SerializationFeature.INDENT_OUTPUT)
-                .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
-                .build();
+      JsonMapper objectMapper = JsonMapper.builder()
+          .enable(SerializationFeature.INDENT_OUTPUT)
+          .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
+          .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+          .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+          .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+          .build();
 
       String packageInfoJson = objectMapper.writeValueAsString(packageInfo);
 

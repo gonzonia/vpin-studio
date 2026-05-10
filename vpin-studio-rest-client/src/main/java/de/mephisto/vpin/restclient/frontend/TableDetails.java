@@ -100,11 +100,11 @@ public class TableDetails {
     this.sqlVersion = sqlVersion;
   }
 
-  public String getgPlayLog() {
+  public String getGPlayLog() {
     return gPlayLog;
   }
 
-  public void setgPlayLog(String gPlayLog) {
+  public void setGPlayLog(String gPlayLog) {
     this.gPlayLog = gPlayLog;
   }
 
@@ -172,27 +172,27 @@ public class TableDetails {
     this.tourneyId = tourneyId;
   }
 
-  public String getgDetails() {
+  public String getGDetails() {
     return gDetails;
   }
 
-  public void setgDetails(String gDetails) {
+  public void setGDetails(String gDetails) {
     this.gDetails = gDetails;
   }
 
-  public String getgNotes() {
+  public String getGNotes() {
     return gNotes;
   }
 
-  public void setgNotes(String gNotes) {
+  public void setGNotes(String gNotes) {
     this.gNotes = gNotes;
   }
 
-  public String getgLog() {
+  public String getGLog() {
     return gLog;
   }
 
-  public void setgLog(String gLog) {
+  public void setGLog(String gLog) {
     this.gLog = gLog;
   }
 

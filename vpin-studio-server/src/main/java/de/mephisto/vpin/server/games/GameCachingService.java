@@ -49,7 +49,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -240,18 +242,18 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         return games;
     }
 
-  private List<Game> getVpxGames() {
-    List<GameDetails> all = gameDetailsRepositoryService.findAll();
-    Map<Integer, GameDetails> mappedGameDetails = new LinkedHashMap<>();
-    for (GameDetails gameDetails : all) {
-      mappedGameDetails.put(gameDetails.getPupId(), gameDetails);
-    }
-    List<Game> games = new ArrayList<>();
-    List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
-    for (GameEmulator gameEmulator : gameEmulators) {
-      if (gameEmulator.isEnabled()) {
-        GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, mappedGameDetails));
-        emulatorCache.drainPendingNewGameIds().forEach(id -> gameLifecycleService.notifyGameCreated(id));
+    private List<Game> getVpxGames() {
+        List<GameDetails> all = gameDetailsRepositoryService.findAll();
+        Map<Integer, GameDetails> mappedGameDetails = new LinkedHashMap<>();
+        for (GameDetails gameDetails : all) {
+            mappedGameDetails.put(gameDetails.getPupId(), gameDetails);
+        }
+        List<Game> games = new ArrayList<>();
+        List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
+        for (GameEmulator gameEmulator : gameEmulators) {
+            if (gameEmulator.isEnabled()) {
+                GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, mappedGameDetails));
+                emulatorCache.drainPendingNewGameIds().forEach(id -> gameLifecycleService.notifyGameCreated(id));
         games.addAll(emulatorCache.getGames());
       }
     }
@@ -259,13 +261,13 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   }
 
 
-  private List<Game> getZenGames() {
-    List<Game> games = new ArrayList<>();
-    List<GameEmulator> gameEmulators = emulatorService.getZenGameEmulators();
-    for (GameEmulator gameEmulator : gameEmulators) {
-      if (gameEmulator.isEnabled()) {
-        GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, Collections.emptyMap()));
-        emulatorCache.drainPendingNewGameIds().forEach(id -> gameLifecycleService.notifyGameCreated(id));
+    private List<Game> getZenGames() {
+        List<Game> games = new ArrayList<>();
+        List<GameEmulator> gameEmulators = emulatorService.getZenGameEmulators();
+        for (GameEmulator gameEmulator : gameEmulators) {
+            if (gameEmulator.isEnabled()) {
+                GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, Collections.emptyMap()));
+                emulatorCache.drainPendingNewGameIds().forEach(id -> gameLifecycleService.notifyGameCreated(id));
         games.addAll(emulatorCache.getGames());
       }
     }
@@ -289,24 +291,24 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
                 .map(game -> applyGameDetails(game, false, false, resolvedMap.get(game.getId())))
                 .toList();
 
-    boolean killFrontend = false;
-    for (GameDetailsInfo info : infos) {
-      if (info.newGame) {
-        // notifyGameCreated is deferred to after computeIfAbsent to avoid recursive ConcurrentHashMap update
-        highscoreService.scanScore(info.game, EventOrigin.INITIAL_SCAN);
-        if (!killFrontend) {
-          LOG.info("New games have been found, automatically killing frontend to release locks.");
-          frontendService.killFrontend();
-          killFrontend = true;
+        boolean killFrontend = false;
+        for (GameDetailsInfo info : infos) {
+            if (info.newGame) {
+                // notifyGameCreated is deferred to after computeIfAbsent to avoid recursive ConcurrentHashMap update
+                highscoreService.scanScore(info.game, EventOrigin.INITIAL_SCAN);
+                if (!killFrontend) {
+                    LOG.info("New games have been found, automatically killing frontend to release locks.");
+                    frontendService.killFrontend();
+                    killFrontend = true;
+                }
+            }
         }
-      }
-    }
 
         infos.parallelStream().forEach(info -> applyGameValidation(info, findFirstIssueOnly));
 
 
-    GameEmulatorCache cache = new GameEmulatorCache(emulator.getType(), emulator.getId(), gamesByEmulator);
-    for (GameDetailsInfo info : infos) {
+        GameEmulatorCache cache = new GameEmulatorCache(emulator.getType(), emulator.getId(), gamesByEmulator);
+        for (GameDetailsInfo info : infos) {
       if (info.newGame) {
         cache.addPendingNewGameId(info.game.getId());
       }
@@ -330,7 +332,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         if (gameDetails == null || forceScan) {
             if (gameDetails == null) {
                 gameDetails = new GameDetails();
-                gameDetails.setCreatedAt(OffsetDateTime.now());
+                gameDetails.setCreatedAt(Instant.now());
             }
 
             tableDetails = frontendService.getTableDetails(game.getId());
@@ -373,7 +375,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
             }
 
             gameDetails.setPupId(game.getId());
-            gameDetails.setUpdatedAt(OffsetDateTime.now());
+            gameDetails.setUpdatedAt(Instant.now());
 
             synchronized (saveLock) {
                 gameDetailsRepositoryService.saveAndFlush(gameDetails);
@@ -405,10 +407,10 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         }
 
         if (game.getDateAdded() == null) {
-            game.setDateAdded(gameDetails.getCreatedAt());
+            game.setDateAdded(OffsetDateTime.ofInstant(gameDetails.getCreatedAt(), ZoneId.systemDefault()));
         }
         if (game.getDateUpdated() == null) {
-            game.setDateUpdated(gameDetails.getUpdatedAt());
+            game.setDateUpdated(OffsetDateTime.ofInstant(gameDetails.getUpdatedAt(), ZoneId.systemDefault()));
         }
 
         //check alias

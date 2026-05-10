@@ -50,7 +50,8 @@ import java.lang.reflect.Field;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
@@ -763,8 +764,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public String backup() {
     File source = new File(RESOURCES, "vpin-studio.db");
-    DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
-    String name = FilenameUtils.getBaseName(source.getName()) + "_" + df.format(LocalDateTime.now()) + ".db";
+    DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss").withZone(ZoneId.systemDefault());
+    String name = FilenameUtils.getBaseName(source.getName()) + "_" + df.format(Instant.now()) + ".db";
     File targetFolder = new File(RESOURCES, "backups/");
     File target = new File(targetFolder, name);
     try {

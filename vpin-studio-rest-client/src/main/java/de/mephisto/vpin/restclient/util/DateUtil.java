@@ -5,10 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
@@ -32,16 +34,16 @@ public class DateUtil {
 
   public static String formatTimeString(Date date) {
     DateTimeFormatter df = DateTimeFormatter.ofPattern("HH-mm");
-    return df.format(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+    return df.format(date.toInstant().atZone(ZoneId.systemDefault()));
   }
 
   public static String formatDateTimeFileString(Date date) {
     DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm");
-    return df.format(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+    return df.format(date.toInstant().atZone(ZoneId.systemDefault()));
   }
 
   public static String formatDateTime(Date date) {
-    return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+    return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(date.toInstant().atZone(ZoneId.systemDefault()));
   }
 
   public static String formatDateTime(OffsetDateTime date) {
@@ -51,11 +53,11 @@ public class DateUtil {
     return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(date);
   }
 
-  public static String formatDateTime(LocalDateTime date) {
+  public static String formatDateTime(Instant date) {
     if (date == null) {
       return "-";
     }
-    return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(date);
+    return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault()).format(date);
   }
 
   public static Date formatDate(LocalDate value, String time) {
@@ -66,8 +68,7 @@ public class DateUtil {
 
       if (time.contains("--")) {
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm-ss");
-        LocalDateTime localDateTime = LocalDateTime.parse(time, df);
-        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        return Date.from(LocalDateTime.parse(time, df).atZone(ZoneId.systemDefault()).toInstant());
       }
 
       String[] split = time.replaceAll("-", ":").split(":");
@@ -125,14 +126,16 @@ public class DateUtil {
     return "-";
   }
 
-  public static String formatDuration(LocalDateTime start, LocalDateTime end) {
+  public static String formatDuration(Instant start, Instant end) {
     if (start != null && end != null) {
       long ms = ChronoUnit.MILLIS.between(start, end);
       if (ms < 0) {
         return "-";
       }
 
-      long diff = ChronoUnit.DAYS.between(start.toLocalDate(), end.toLocalDate());
+      LocalDate s = start.atZone(ZoneId.systemDefault()).toLocalDate();
+      LocalDate e = end.atZone(ZoneId.systemDefault()).toLocalDate();
+      long diff = ChronoUnit.DAYS.between(s, e);
       if (diff == 1) {
         return diff + " day";
       }
@@ -145,9 +148,9 @@ public class DateUtil {
     return "-";
   }
 
-  public static String formatDuration(OffsetDateTime start, LocalDateTime end) {
+  public static String formatDuration(OffsetDateTime start, Instant end) {
     if (start != null && end != null) {
-      return formatDuration(start.toLocalDateTime(), end);
+      return formatDuration(start.toInstant(), end);
     }
     return "-";
   }
@@ -178,8 +181,8 @@ public class DateUtil {
 //  }
 
   public static Date toDate(Date date, int hours, int minutes) {
-    LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-    localDateTime = localDateTime.withHour(hours).withMinute(minutes).withSecond(0).withNano(0);
-    return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    ZonedDateTime zdt = date.toInstant().atZone(ZoneId.systemDefault());
+    zdt = zdt.withHour(hours).withMinute(minutes).withSecond(0).withNano(0);
+    return Date.from(zdt.toInstant());
   }
 }

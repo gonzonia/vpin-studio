@@ -11,9 +11,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.util.UrlPathHelper;
 
 import de.mephisto.vpin.restclient.JsonArgResolver;
 
@@ -27,12 +25,13 @@ public class WebConfig implements WebMvcConfigurer {
   @Value("${server.debug.enabled}")
   private boolean debugMode;
 
-  @Override
-  public void configurePathMatch(PathMatchConfigurer configurer) {
-    UrlPathHelper urlPathHelper = new UrlPathHelper();
-    urlPathHelper.setRemoveSemicolonContent(false);
-    configurer.setUrlPathHelper(urlPathHelper);
-  }
+  //No Longer needed. Spring Boot 3+/4+ defaults to PathPatternParser which handles semicolons fine without explicit config.
+//  @Override
+//  public void configurePathMatch(PathMatchConfigurer configurer) {
+//    UrlPathHelper urlPathHelper = new UrlPathHelper();
+//    urlPathHelper.setRemoveSemicolonContent(false);
+//    configurer.setUrlPathHelper(urlPathHelper);
+//  }
 
   @Override
   public void addCorsMappings(CorsRegistry registry) {

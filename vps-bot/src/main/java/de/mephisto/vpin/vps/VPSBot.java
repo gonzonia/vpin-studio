@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.lang.invoke.MethodHandles;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -38,7 +38,7 @@ public class VPSBot {
 
   private final JDA jda;
   private final VPSDiscordListenerAdapter listenerAdapter;
-  private LocalDateTime lastUpdate = LocalDateTime.now();
+  private Instant lastUpdate = Instant.now();
   private int totalDiffCount = 0;
   private boolean postSummary = false;
 
@@ -89,7 +89,7 @@ public class VPSBot {
       Thread.currentThread().setName("VPS Discord Notifier");
       try {
         if (!tableDiffs.isEmpty()) {
-          lastUpdate = LocalDateTime.now();
+          lastUpdate = Instant.now();
 
           Map<String, String> entries = new HashMap<>();
           int counter = 0;
@@ -265,7 +265,7 @@ public class VPSBot {
 
   public String getStatus() {
     DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault());
-    return "Last Update: " + formatter.format(lastUpdate.atZone(ZoneId.systemDefault())) + "\nTotal Changes: " + totalDiffCount;
+    return "Last Update: " + formatter.format(lastUpdate) + "\nTotal Changes: " + totalDiffCount;
   }
 
 

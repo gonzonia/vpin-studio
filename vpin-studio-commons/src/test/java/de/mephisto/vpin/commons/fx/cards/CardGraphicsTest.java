@@ -10,6 +10,8 @@ import java.util.concurrent.CountDownLatch;
 
 import org.junit.Test;
 
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
 
 import de.mephisto.vpin.restclient.cards.CardData;
@@ -56,7 +58,11 @@ public class CardGraphicsTest extends Application {
 
   public CardTemplate loadTemplate(String filename) throws IOException {
     try (InputStream in = getClass().getResourceAsStream(filename)) {
-      JsonMapper objectMapper = JsonMapper.builder().build();
+      JsonMapper objectMapper = JsonMapper.builder()
+          .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+          .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+          .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+          .build();
       return objectMapper.readValue(in, CardTemplate.class);	
     }
   }

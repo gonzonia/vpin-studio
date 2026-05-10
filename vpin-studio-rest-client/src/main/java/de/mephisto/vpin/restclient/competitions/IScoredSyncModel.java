@@ -25,11 +25,11 @@ public class IScoredSyncModel {
     this.invalidate = invalidate;
   }
 
-  public IScoredGameRoom getiScoredGameRoom() {
+  public IScoredGameRoom getIScoredGameRoom() {
     return iScoredGameRoom;
   }
 
-  public void setiScoredGameRoom(IScoredGameRoom iScoredGameRoom) {
+  public void setIScoredGameRoom(IScoredGameRoom iScoredGameRoom) {
     this.iScoredGameRoom = iScoredGameRoom;
   }
 

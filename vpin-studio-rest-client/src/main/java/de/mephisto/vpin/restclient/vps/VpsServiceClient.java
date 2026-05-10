@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -76,8 +77,8 @@ public class VpsServiceClient extends VPinStudioClientService {
     LOG.info("Loaded " + cache.size() + " mapped VPS tables.");
   }
 
-  public Date getChangeDate() {
-    return getRestClient().get(API + "vps/changeDate", Date.class);
+  public OffsetDateTime getChangeDate() {
+    return getRestClient().get(API + "vps/changeDate", OffsetDateTime.class);
   }
 
   public List<VpsInstallLink> getInstallLinks(String link) {

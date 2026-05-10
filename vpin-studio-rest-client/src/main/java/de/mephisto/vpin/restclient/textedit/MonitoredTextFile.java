@@ -45,11 +45,11 @@ public class MonitoredTextFile {
     this.path = path;
   }
 
-  public VPinFile getvPinFile() {
+  public VPinFile getVPinFile() {
     return vPinFile;
   }
 
-  public void setvPinFile(VPinFile vPinFile) {
+  public void setVPinFile(VPinFile vPinFile) {
     this.vPinFile = vPinFile;
   }
 

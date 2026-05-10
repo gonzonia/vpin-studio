@@ -1,10 +1,17 @@
 package de.mephisto.vpin.restclient.vpauthenticators;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum AuthenticationProvider {
   VPU,
   VPF;
 
-  public String toString() {
+    @JsonValue
+    public String toJsonValue() {
+        return name();
+    }
+
+    public String toString() {
       return switch (this) {
           case VPF -> "VP Forum";
           case VPU -> "VP Universe";

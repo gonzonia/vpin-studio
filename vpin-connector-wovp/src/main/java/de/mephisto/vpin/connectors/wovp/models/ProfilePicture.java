@@ -6,11 +6,11 @@ public class ProfilePicture {
   @JsonProperty("x-large")
   private ProfilePictureVariant xLarge;
 
-  public ProfilePictureVariant getxLarge() {
+  public ProfilePictureVariant getXLarge() {
     return xLarge;
   }
 
-  public void setxLarge(ProfilePictureVariant xLarge) {
+  public void setXLarge(ProfilePictureVariant xLarge) {
     this.xLarge = xLarge;
   }
 }

@@ -381,7 +381,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         stmtBuilder.append("'CUSTOM5' = ?, ");
         params.add(tableDetails.getCustom5());
 
-        importGameExtraValues(connect, id, tableDetails.getgLog(), tableDetails.getgNotes(), tableDetails.getgPlayLog(), tableDetails.getgDetails());
+        importGameExtraValues(connect, id, tableDetails.getGLog(), tableDetails.getGNotes(), tableDetails.getGPlayLog(), tableDetails.getGDetails());
       }
 
       stmtBuilder.append("DateUpdated=? WHERE GameID=?");
@@ -2284,10 +2284,10 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         String gPlayLog = rs.getString("gPlayLog");
         String gDetails = rs.getString("gDetails");
 
-        manifest.setgLog(gLog);
-        manifest.setgNotes(gNotes);
-        manifest.setgPlayLog(gPlayLog);
-        manifest.setgDetails(gDetails);
+        manifest.setGLog(gLog);
+        manifest.setGNotes(gNotes);
+        manifest.setGPlayLog(gPlayLog);
+        manifest.setGDetails(gDetails);
       }
       rs.close();
       statement.close();

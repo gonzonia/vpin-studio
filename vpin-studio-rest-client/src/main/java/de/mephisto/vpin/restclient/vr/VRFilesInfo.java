@@ -35,20 +35,20 @@ public class VRFilesInfo {
   }
 
   @JsonIgnore
-  public File getvPinballXIniFile() {
+  public File getVPinballXIniFile() {
     return vPinballXIniFile;
   }
 
-  public void setvPinballXIniFile(File vPinballXIniFile) {
+  public void setVPinballXIniFile(File vPinballXIniFile) {
     this.vPinballXIniFile = vPinballXIniFile;
   }
 
   @JsonIgnore
-  public File getvPinballXIniVrFile() {
+  public File getVPinballXIniVrFile() {
     return vPinballXIniVrFile;
   }
 
-  public void setvPinballXIniVrFile(File vPinballXIniVrFile) {
+  public void setVPinballXIniVrFile(File vPinballXIniVrFile) {
     this.vPinballXIniVrFile = vPinballXIniVrFile;
   }
 
@@ -68,19 +68,19 @@ public class VRFilesInfo {
     this.dmdDeviceIniVr = dmdDeviceIniVr;
   }
 
-  public String getvPinballXIni() {
+  public String getVPinballXIni() {
     return vPinballXIni;
   }
 
-  public void setvPinballXIni(String vPinballXIni) {
+  public void setVPinballXIni(String vPinballXIni) {
     this.vPinballXIni = vPinballXIni;
   }
 
-  public String getvPinballXIniVr() {
+  public String getVPinballXIniVr() {
     return vPinballXIniVr;
   }
 
-  public void setvPinballXIniVr(String vPinballXIniVr) {
+  public void setVPinballXIniVr(String vPinballXIniVr) {
     this.vPinballXIniVr = vPinballXIniVr;
   }
 }

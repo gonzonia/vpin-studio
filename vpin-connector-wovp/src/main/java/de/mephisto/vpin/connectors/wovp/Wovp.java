@@ -13,10 +13,12 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.StreamReadFeature;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
@@ -41,11 +43,15 @@ public class Wovp {
   private static Map<String, WovpPlayer> players = new HashMap<>();
 
   static {
-    objectMapper = JsonMapper.builder()
-        .enable(SerializationFeature.INDENT_OUTPUT)
-        .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        .build();
+      objectMapper = JsonMapper.builder()
+              .enable(SerializationFeature.INDENT_OUTPUT)
+              .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
+              .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+              .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+              .disable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION)
+              .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+              .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+              .build();
   }
 
   private final String apiKey;

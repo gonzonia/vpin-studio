@@ -18,7 +18,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.text.ParseException;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -89,13 +91,15 @@ public class PinballXStatisticsParser {
       e.setUniqueId(gameId);
 
       try {
-        LocalDateTime lastPlayed = LocalDateTime.parse(s.getString("lastplayed"), statisticsFormatter);
-        e.setLastPlayed(lastPlayed.atZone(ZoneId.systemDefault()).toOffsetDateTime());
+        Instant lastPlayed = LocalDateTime.parse(s.getString("lastplayed"), statisticsFormatter)
+            .atZone(ZoneId.systemDefault()).toInstant();
+        e.setLastPlayed(OffsetDateTime.ofInstant(lastPlayed, ZoneId.systemDefault()));
       }
       catch (Exception ex) {
         try {
-          LocalDateTime lastPlayed = LocalDateTime.parse(s.getString("lastplayed"), statisticsFormatterAlt);
-          e.setLastPlayed(lastPlayed.atZone(ZoneId.systemDefault()).toOffsetDateTime());
+          Instant lastPlayed = LocalDateTime.parse(s.getString("lastplayed"), statisticsFormatterAlt)
+              .atZone(ZoneId.systemDefault()).toInstant();
+          e.setLastPlayed(OffsetDateTime.ofInstant(lastPlayed, ZoneId.systemDefault()));
         } catch (Exception ex2) {
           LOG.error("Failed to parse last played date for table " + game.getGameName() + ": " + s.getString("lastplayed"));
         }

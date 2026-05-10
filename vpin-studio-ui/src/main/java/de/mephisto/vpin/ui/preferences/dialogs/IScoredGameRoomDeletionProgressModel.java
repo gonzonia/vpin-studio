@@ -63,7 +63,7 @@ public class IScoredGameRoomDeletionProgressModel extends ProgressModel<IScoredG
   @Override
   public void processNext(ProgressResultModel progressResultModel, IScoredGameRoom room) {
     try {
-      client.getiScoredService().deleteGameRoom(room.getUuid());
+      client.getIScoredService().deleteGameRoom(room.getUuid());
     }
     catch (Exception e) {
       LOG.warn("Failed to delete iscored game room: " + e.getMessage());

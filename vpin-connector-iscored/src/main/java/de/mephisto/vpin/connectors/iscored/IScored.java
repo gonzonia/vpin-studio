@@ -8,11 +8,12 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tools.jackson.databind.DeserializationFeature;
-import tools.jackson.databind.MapperFeature;
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.SerializationFeature;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.*;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.deser.std.StdDeserializer;
 import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -20,6 +21,10 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,10 +34,28 @@ public class IScored {
   private final static ObjectMapper objectMapper;
 
   static {
+    SimpleModule timeModule = new SimpleModule();
+    timeModule.addDeserializer(Instant.class, new StdDeserializer<Instant>(Instant.class) {
+      private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+      @Override
+      public Instant deserialize(JsonParser p, DeserializationContext ctxt) {
+        String text = p.getString();
+        if (text == null || text.isBlank()) {
+          return null;
+        }
+        return LocalDateTime.parse(text, FORMATTER).toInstant(ZoneOffset.UTC);
+      }
+    });
+
     objectMapper = JsonMapper.builder()
+        .addModule(timeModule)
         .enable(SerializationFeature.INDENT_OUTPUT)
         .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+        .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+        .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
         .build();
   }
 

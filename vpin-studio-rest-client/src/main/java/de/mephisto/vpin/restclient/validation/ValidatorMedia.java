@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.validation;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum ValidatorMedia {
   audio("Audio"),
   video("Video"),
@@ -8,6 +10,11 @@ public enum ValidatorMedia {
 
 
   private final String displayName;
+
+    @JsonValue
+    public String toJsonValue() {
+        return name();
+    }
 
   ValidatorMedia(String displayName) {
     this.displayName = displayName;

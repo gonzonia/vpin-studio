@@ -137,7 +137,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
     scoreLabel.setFont(getScoreFont());
     scoreLabel.setText(tableScore.getScoreText());
 
-    String date = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(tableScore.getCreationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+    String date = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(tableScore.getCreationDate().toInstant().atZone(ZoneId.systemDefault()));
     changeDateLabel.setText("Updated: " + date);
 
     if (game != null) {

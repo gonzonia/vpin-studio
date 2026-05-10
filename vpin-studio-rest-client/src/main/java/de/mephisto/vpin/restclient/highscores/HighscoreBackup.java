@@ -1,7 +1,9 @@
 package de.mephisto.vpin.restclient.highscores;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
@@ -66,8 +68,8 @@ public class HighscoreBackup {
     try {
       String name = this.filename.substring(0, filename.indexOf("."));
       DateTimeFormatter parser = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
-      LocalDateTime localDateTime = LocalDateTime.parse(name, parser);
-      return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(localDateTime);
+      Instant instant = LocalDateTime.parse(name, parser).atZone(ZoneId.systemDefault()).toInstant();
+      return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault()).format(instant);
     } catch (Exception e) {
       return this.getFilename();
     }

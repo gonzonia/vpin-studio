@@ -29,8 +29,8 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -206,7 +206,7 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
 
     if (isValid()) {
       summary.addEntry("DOFLinx.INI", getDOFLinxINI().getAbsolutePath());
-      summary.addEntry("Last Modified", DateUtil.formatDateTime(new Date(getDOFLinxINI().lastModified())));
+      summary.addEntry("Last Modified", DateUtil.formatDateTime(Instant.ofEpochMilli(getDOFLinxINI().lastModified())));
     }
     else {
       summary.addEntry("DOFLinx.INI", "-");

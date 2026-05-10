@@ -20,7 +20,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -72,8 +74,9 @@ public class PinballYStatisticsParser {
       e.setUniqueId(game.getId());
 
       try {
-        LocalDateTime localDateTime = LocalDateTime.parse(lastPlayed, statisticsFormatter);
-        e.setLastPlayed(localDateTime.atZone(ZoneId.systemDefault()).toOffsetDateTime());
+        Instant lastPlayedInstant = LocalDateTime.parse(lastPlayed, statisticsFormatter)
+            .atZone(ZoneId.systemDefault()).toInstant();
+        e.setLastPlayed(OffsetDateTime.ofInstant(lastPlayedInstant, ZoneId.systemDefault()));
       }
       catch (Exception ex) {
         LOG.error("Cannot parse date {}, {}", lastPlayed, ex.getMessage());

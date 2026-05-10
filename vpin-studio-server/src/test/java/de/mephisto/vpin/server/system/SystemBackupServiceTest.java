@@ -18,6 +18,8 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
@@ -127,7 +129,11 @@ public class SystemBackupServiceTest {
     descriptor.setPinemhi(false);
     descriptor.setPinvol(false);
 
-    JsonMapper mapper = JsonMapper.builder().build();
+    JsonMapper mapper = JsonMapper.builder()
+        .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+        .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+        .build();
     String backupJson = mapper.writeValueAsString(Collections.emptyMap());
     String descriptorJson = mapper.writeValueAsString(descriptor);
 

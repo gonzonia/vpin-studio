@@ -1,8 +1,10 @@
 package de.mephisto.vpin.server.highscores.parsing.vpreg;
 
 import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
 import com.thoughtworks.xstream.core.util.Base64Encoder;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
@@ -191,6 +193,9 @@ public class VPRegFile {
 
       ObjectMapper objectMapper = JsonMapper.builder()
           .enable(SerializationFeature.INDENT_OUTPUT)
+          .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+          .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+          .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
           .build();
       return objectMapper.writeValueAsString(target);
     }
@@ -215,6 +220,9 @@ public class VPRegFile {
     try {
       ObjectMapper objectMapper = JsonMapper.builder()
           .enable(SerializationFeature.INDENT_OUTPUT)
+          .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+          .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+          .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
           .build();
       TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {
       };

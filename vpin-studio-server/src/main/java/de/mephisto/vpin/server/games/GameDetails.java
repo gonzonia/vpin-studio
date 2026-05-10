@@ -9,7 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
 @Entity
 @Table(name = "GameDetails")
@@ -17,17 +17,17 @@ import java.time.OffsetDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GameDetails {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false, unique = true)
   private Long id;
 
   @Column(nullable = false, updatable = false)
   @CreatedDate
-  private OffsetDateTime createdAt;
+  private Instant createdAt;
 
   @Column(nullable = false)
   @LastModifiedDate
-  private OffsetDateTime updatedAt;
+  private Instant updatedAt;
 
   public String assets;
 
@@ -240,19 +240,19 @@ public class GameDetails {
     this.scripts = scripts;
   }
 
-  public OffsetDateTime getCreatedAt() {
+  public Instant getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(OffsetDateTime createdAt) {
+  public void setCreatedAt(Instant createdAt) {
     this.createdAt = createdAt;
   }
 
-  public OffsetDateTime getUpdatedAt() {
+  public Instant getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(OffsetDateTime updatedAt) {
+  public void setUpdatedAt(Instant updatedAt) {
     this.updatedAt = updatedAt;
   }
 

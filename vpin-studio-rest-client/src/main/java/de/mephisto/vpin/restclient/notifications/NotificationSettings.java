@@ -92,11 +92,11 @@ public class NotificationSettings extends JsonSettings {
     this.highscoreCheckedNotification = highscoreCheckedNotification;
   }
 
-  public boolean isiScoredNotification() {
+  public boolean isIScoredNotification() {
     return iScoredNotification;
   }
 
-  public void setiScoredNotification(boolean iScoredNotification) {
+  public void setIScoredNotification(boolean iScoredNotification) {
     this.iScoredNotification = iScoredNotification;
   }
 

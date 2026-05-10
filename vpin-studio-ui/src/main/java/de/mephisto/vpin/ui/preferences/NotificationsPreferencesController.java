@@ -148,9 +148,9 @@ public class NotificationsPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(notificationSettings);
     });
 
-    iScoredCheckbox.setSelected(notificationSettings.isiScoredNotification());
+    iScoredCheckbox.setSelected(notificationSettings.isIScoredNotification());
     iScoredCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      notificationSettings.setiScoredNotification(t1);
+      notificationSettings.setIScoredNotification(t1);
       client.getPreferenceService().setJsonPreference(notificationSettings);
     });
 

@@ -186,7 +186,7 @@ public class VPinStudioClient {
     return restClient.getHost();
   }
 
-  public IScoredServiceClient getiScoredService() {
+  public IScoredServiceClient getIScoredService() {
     return iScoredServiceClient;
   }
 

@@ -156,13 +156,13 @@ public class VRPreferencesController implements Initializable {
       dmdDeviceIniTextVr.setTooltip(new Tooltip(vrFiles.getDmdDeviceIniVr()));
     }
 
-    if (vrFiles.getvPinballXIni() != null) {
-      vPinballXIniText.setText(vrFiles.getvPinballXIni());
-      vPinballXIniText.setTooltip(new Tooltip(vrFiles.getvPinballXIni()));
+    if (vrFiles.getVPinballXIni() != null) {
+      vPinballXIniText.setText(vrFiles.getVPinballXIni());
+      vPinballXIniText.setTooltip(new Tooltip(vrFiles.getVPinballXIni()));
     }
-    if (vrFiles.getvPinballXIniVr() != null) {
-      vPinballXIniTextVr.setText(vrFiles.getvPinballXIniVr());
-      vPinballXIniTextVr.setTooltip(new Tooltip(vrFiles.getvPinballXIniVr()));
+    if (vrFiles.getVPinballXIniVr() != null) {
+      vPinballXIniTextVr.setText(vrFiles.getVPinballXIniVr());
+      vPinballXIniTextVr.setTooltip(new Tooltip(vrFiles.getVPinballXIniVr()));
     }
   }
 }

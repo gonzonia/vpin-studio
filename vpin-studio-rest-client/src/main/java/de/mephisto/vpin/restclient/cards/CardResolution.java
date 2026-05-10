@@ -1,4 +1,5 @@
 package de.mephisto.vpin.restclient.cards;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum CardResolution {
   qHD(960, 540), 
@@ -14,6 +15,11 @@ public enum CardResolution {
 
   private int width;
   private int height;
+
+    @JsonValue
+    public String toJsonValue() {
+        return name();
+    }
 
 
   public static CardResolution valueOfString(String newValue) {
