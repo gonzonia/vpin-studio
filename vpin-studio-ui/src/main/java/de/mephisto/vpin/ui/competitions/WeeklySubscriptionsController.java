@@ -309,7 +309,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       if (value.competition == null) {
         return new SimpleObjectProperty<>("-");
       }
-      dateLabel.setText(DateUtil.formatDateTime(value.competition.getCreatedAt()));
+      dateLabel.setText(DateUtil.formatDateTime(value.competition.getStartDate()));
 
       vBox.getChildren().add(dateLabel);
       return new SimpleObjectProperty(vBox);
