@@ -111,7 +111,7 @@ public class VRService implements InitializingBean, PreferenceChangedListener, E
       return;
     }
     toggleFile(gameEmulator, vrFiles.getDmdDeviceIniFile(), vrFiles.getDmdDeviceIniVrFile(), enabled);
-    toggleFile(gameEmulator, vrFiles.getVPinballXIniFile(), vrFiles.getVPinballXIniVrFile(), enabled);
+    toggleFile(gameEmulator, vrFiles.getvPinballXIniFile(), vrFiles.getvPinballXIniVrFile(), enabled);
   }
 
   /**
@@ -230,13 +230,13 @@ public class VRService implements InitializingBean, PreferenceChangedListener, E
       //vpinballx.ini
       File vpxIniFile = vpxService.getVPXFile();
       File vpxIniFileVr = new File(getVRResourcesFolder(emulatorId), vpxIniFile.getName());
-      info.setVPinballXIni(vpxIniFile.getAbsolutePath());
-      info.setVPinballXIniVr(vpxIniFileVr.getAbsolutePath());
+      info.setvPinballXIni(vpxIniFile.getAbsolutePath());
+      info.setvPinballXIniVr(vpxIniFileVr.getAbsolutePath());
       if (vpxIniFileVr.exists()) {
-        info.setVPinballXIniVrFile(vpxIniFileVr);
+        info.setvPinballXIniVrFile(vpxIniFileVr);
       }
       if (vpxIniFile.exists()) {
-        info.setVPinballXIniFile(vpxIniFile);
+        info.setvPinballXIniFile(vpxIniFile);
       }
       return info;
     }

@@ -549,10 +549,10 @@ public class TablesSidebarTableDetailsController implements Initializable {
         webDbId.setText(StringUtils.isEmpty(tableDetails.getWebGameId()) ? "-" : tableDetails.getWebGameId());
         webLink.setText(StringUtils.isEmpty(tableDetails.getWebLink2Url()) ? "-" : tableDetails.getWebLink2Url());
         isMod.setText(String.valueOf(tableDetails.isMod()));
-        gDetails.setText(StringUtils.isEmpty(tableDetails.getGDetails()) ? "" : tableDetails.getGDetails());
-        gNotes.setText(StringUtils.isEmpty(tableDetails.getGNotes()) ? "" : tableDetails.getGNotes());
-        gLog.setText(StringUtils.isEmpty(tableDetails.getGLog()) ? "" : tableDetails.getGLog());
-        gPlayLog.setText(StringUtils.isEmpty(tableDetails.getGPlayLog()) ? "" : tableDetails.getGPlayLog());
+        gDetails.setText(StringUtils.isEmpty(tableDetails.getgDetails()) ? "" : tableDetails.getgDetails());
+        gNotes.setText(StringUtils.isEmpty(tableDetails.getgNotes()) ? "" : tableDetails.getgNotes());
+        gLog.setText(StringUtils.isEmpty(tableDetails.getgLog()) ? "" : tableDetails.getgLog());
+        gPlayLog.setText(StringUtils.isEmpty(tableDetails.getgPlayLog()) ? "" : tableDetails.getgPlayLog());
       }
     }
     else {

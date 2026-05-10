@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.players;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.mephisto.vpin.server.assets.Asset;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
@@ -54,11 +55,13 @@ public class Player {
   @Column(name = "administrative", nullable = false, columnDefinition = "boolean default false")
   private boolean administrative;
 
-  public String getIScoredName() {
+    @JsonProperty("iScoredName")
+  public String getiScoredName() {
     return iScoredName;
   }
 
-  public void setIScoredName(String iScoredName) {
+    @JsonProperty("iScoredName")
+  public void setiScoredName(String iScoredName) {
     this.iScoredName = iScoredName;
   }
 

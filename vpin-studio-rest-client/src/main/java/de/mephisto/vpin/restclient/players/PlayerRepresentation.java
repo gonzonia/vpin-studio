@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.players;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import org.jspecify.annotations.NonNull;
@@ -44,11 +45,13 @@ public class PlayerRepresentation {
     return account;
   }
 
-  public String getIScoredName() {
+    @JsonProperty("iScoredName")
+  public String getiScoredName() {
     return iScoredName;
   }
 
-  public void setIScoredName(String iScoredName) {
+    @JsonProperty("iScoredName")
+  public void setiScoredName(String iScoredName) {
     this.iScoredName = iScoredName;
   }
 

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.vr;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.File;
 
@@ -35,20 +36,24 @@ public class VRFilesInfo {
   }
 
   @JsonIgnore
-  public File getVPinballXIniFile() {
+  @JsonProperty("vPinballXIniFile")
+  public File getvPinballXIniFile() {
     return vPinballXIniFile;
   }
 
-  public void setVPinballXIniFile(File vPinballXIniFile) {
+    @JsonProperty("vPinballXIniFile")
+  public void setvPinballXIniFile(File vPinballXIniFile) {
     this.vPinballXIniFile = vPinballXIniFile;
   }
 
   @JsonIgnore
-  public File getVPinballXIniVrFile() {
+  @JsonProperty("vPinballXIniVrFile")
+  public File getvPinballXIniVrFile() {
     return vPinballXIniVrFile;
   }
 
-  public void setVPinballXIniVrFile(File vPinballXIniVrFile) {
+    @JsonProperty("vPinballXIniVrFile")
+  public void setvPinballXIniVrFile(File vPinballXIniVrFile) {
     this.vPinballXIniVrFile = vPinballXIniVrFile;
   }
 
@@ -68,19 +73,23 @@ public class VRFilesInfo {
     this.dmdDeviceIniVr = dmdDeviceIniVr;
   }
 
-  public String getVPinballXIni() {
+    @JsonProperty("vPinballXIni")
+  public String getvPinballXIni() {
     return vPinballXIni;
   }
 
-  public void setVPinballXIni(String vPinballXIni) {
+    @JsonProperty("vPinballXIni")
+  public void setvPinballXIni(String vPinballXIni) {
     this.vPinballXIni = vPinballXIni;
   }
 
-  public String getVPinballXIniVr() {
+    @JsonProperty("vPinballXIniVr")
+  public String getvPinballXIniVr() {
     return vPinballXIniVr;
   }
 
-  public void setVPinballXIniVr(String vPinballXIniVr) {
+    @JsonProperty("vPinballXIniVr")
+  public void setvPinballXIniVr(String vPinballXIniVr) {
     this.vPinballXIniVr = vPinballXIniVr;
   }
 }

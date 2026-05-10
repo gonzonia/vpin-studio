@@ -79,14 +79,14 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
       if (newScore.getPlayer() != null) {
         playerName = newScore.getPlayer().getName();
 
-        if (!StringUtils.isEmpty(newScore.getPlayer().getIScoredName())) {
-          playerName = newScore.getPlayer().getIScoredName();
+        if (!StringUtils.isEmpty(newScore.getPlayer().getiScoredName())) {
+          playerName = newScore.getPlayer().getiScoredName();
         }
       }
       IScoredResult result = IScored.submitScore(gameRoom, iScoredGame, playerName, newScore.getPlayerInitials(), newScore.getScore());
       SLOG.info(result.toString());
 
-      if (Features.NOTIFICATIONS_ENABLED && result.isSent() && notificationSettings.isIScoredNotification()) {
+      if (Features.NOTIFICATIONS_ENABLED && result.isSent() && notificationSettings.isiScoredNotification()) {
         Game game = gameService.getGame(newScore.getGameId());
         File wheelImage = gameService.getWheelImage(game);
         Notification notification = NotificationFactory.createNotification(wheelImage,

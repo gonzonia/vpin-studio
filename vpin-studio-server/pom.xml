@@ -500,7 +500,9 @@
                             </resources>
                         </configuration>
                     </execution>
+
                 </executions>
+
             </plugin>
 
             <plugin>

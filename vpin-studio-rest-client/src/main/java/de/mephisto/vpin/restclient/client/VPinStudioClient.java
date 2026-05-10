@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.client;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.altcolor.AltColorServiceClient;
 import de.mephisto.vpin.restclient.altsound.AltSoundServiceClient;
@@ -186,7 +187,8 @@ public class VPinStudioClient {
     return restClient.getHost();
   }
 
-  public IScoredServiceClient getIScoredService() {
+    @JsonProperty("getiScoredService")
+  public IScoredServiceClient getiScoredService() {
     return iScoredServiceClient;
   }
 

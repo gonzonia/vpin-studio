@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.frontend;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,11 +102,13 @@ public class TableDetails {
     this.sqlVersion = sqlVersion;
   }
 
-  public String getGPlayLog() {
+    @JsonProperty("gPlayLog")
+  public String getgPlayLog() {
     return gPlayLog;
   }
 
-  public void setGPlayLog(String gPlayLog) {
+    @JsonProperty("gPlayLog")
+  public void setgPlayLog(String gPlayLog) {
     this.gPlayLog = gPlayLog;
   }
 
@@ -172,27 +176,33 @@ public class TableDetails {
     this.tourneyId = tourneyId;
   }
 
-  public String getGDetails() {
+    @JsonProperty("gDetails")
+  public String getgDetails() {
     return gDetails;
   }
 
-  public void setGDetails(String gDetails) {
+    @JsonProperty("gDetails")
+  public void setgDetails(String gDetails) {
     this.gDetails = gDetails;
   }
 
-  public String getGNotes() {
+    @JsonProperty("gNotes")
+  public String getgNotes() {
     return gNotes;
   }
 
-  public void setGNotes(String gNotes) {
+    @JsonProperty("gNotes")
+  public void setgNotes(String gNotes) {
     this.gNotes = gNotes;
   }
 
-  public String getGLog() {
+    @JsonProperty("gLog")
+  public String getgLog() {
     return gLog;
   }
 
-  public void setGLog(String gLog) {
+    @JsonProperty("gLog")
+  public void setgLog(String gLog) {
     this.gLog = gLog;
   }
 

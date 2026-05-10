@@ -129,7 +129,7 @@ public class TextEditorController implements Initializable, DialogController {
 
   public void load(MonitoredTextFile file) throws Exception {
     this.file = file;
-    if(file.getVPinFile() == null) {
+    if(file.getvPinFile() == null) {
       richText = new RichText(file.getContent());
       richText.getCodeArea().setEditable(false);
       size.setVisible(false);
