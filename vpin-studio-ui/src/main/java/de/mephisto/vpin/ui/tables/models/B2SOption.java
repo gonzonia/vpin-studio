@@ -20,9 +20,8 @@ public class B2SOption {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof B2SOption)) return false;
+    if (!(o instanceof B2SOption that)) return false;
 
-    B2SOption that = (B2SOption) o;
     return id == that.id;
   }
 

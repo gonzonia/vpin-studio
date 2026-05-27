@@ -340,9 +340,7 @@ public class GameEmulator {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof GameEmulator)) return false;
-
-    GameEmulator that = (GameEmulator) o;
+    if (!(o instanceof GameEmulator that)) return false;
 
     return id == that.id;
   }

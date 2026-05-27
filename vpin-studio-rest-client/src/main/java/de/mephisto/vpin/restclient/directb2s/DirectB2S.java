@@ -49,9 +49,8 @@ public class DirectB2S {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof DirectB2S)) return false;
+    if (!(o instanceof DirectB2S that)) return false;
 
-    DirectB2S that = (DirectB2S) o;
     if (this.emulatorId != that.emulatorId) return false;
     return Objects.equals(this.fileName, that.fileName);
   }

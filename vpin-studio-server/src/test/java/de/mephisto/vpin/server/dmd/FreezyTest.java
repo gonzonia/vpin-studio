@@ -22,14 +22,11 @@ public class FreezyTest {
     iniConfiguration.setSeparatorUsedInInput("=");
 
     File iniFile = new File("../testsystem/vPinball/VisualPinball/VPinMAME/DmdDevice.ini");
-    FileReader fileReader = new FileReader(iniFile);
-    try {
-      iniConfiguration.read(fileReader);
-    } catch (Exception e) {
-      e.getMessage();
-    } finally {
-      fileReader.close();
-    }
+      try (FileReader fileReader = new FileReader(iniFile)) {
+          iniConfiguration.read(fileReader);
+      } catch (Exception e) {
+          e.getMessage();
+      }
 
     Set<String> sections = iniConfiguration.getSections();
 

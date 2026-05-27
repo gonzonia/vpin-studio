@@ -40,38 +40,28 @@ public class VpxzArchiveUtil {
   }
 
   public static TableDetails readTableDetails(File file) throws JacksonException {
-    ZipFile zipFile = VpxzArchiveUtil.createZipFile(file);
-    try {
-      String text = readStringFromZip(zipFile, TableDetails.ARCHIVE_FILENAME);
-      if (text != null) {
-        return objectMapper.readValue(text, TableDetails.class);
+      try (ZipFile zipFile = VpxzArchiveUtil.createZipFile(file)) {
+          try {
+              String text = readStringFromZip(zipFile, TableDetails.ARCHIVE_FILENAME);
+              if (text != null) {
+                  return objectMapper.readValue(text, TableDetails.class);
+              }
+          } catch (Exception e) {
+              LOG.error("Failed to read {}: {}", TableDetails.ARCHIVE_FILENAME, e.getMessage(), e);
+          }
+      } catch (IOException e) {
+          //ignore
       }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to read {}: {}", TableDetails.ARCHIVE_FILENAME, e.getMessage(), e);
-    }
-    finally {
-      try {
-        zipFile.close();
-      }
-      catch (IOException e) {
-        //ignore
-      }
-    }
     return null;
   }
 
   public static VPXZPackageInfo readPackageInfo(File file) throws Exception {
-    ZipFile zipFile = createZipFile(file);
-    try {
-      String text = readStringFromZip(zipFile, VPXZPackageInfo.PACKAGE_INFO_JSON_FILENAME);
-      if (text != null) {
-        return objectMapper.readValue(text, VPXZPackageInfo.class);
+      try (ZipFile zipFile = createZipFile(file)) {
+          String text = readStringFromZip(zipFile, VPXZPackageInfo.PACKAGE_INFO_JSON_FILENAME);
+          if (text != null) {
+              return objectMapper.readValue(text, VPXZPackageInfo.class);
+          }
       }
-    }
-    finally {
-      zipFile.close();
-    }
     return null;
   }
 
@@ -90,100 +80,86 @@ public class VpxzArchiveUtil {
   }
 
   public static boolean extractFolder(@NonNull File archiveFile, @NonNull File targetFolder, @Nullable String archiveFolder, @NonNull List<String> suffixAllowList) {
-    ZipFile zipFile = createZipFile(archiveFile);
-    try {
-      List<FileHeader> fileHeaders = zipFile.getFileHeaders();
-      for (FileHeader fileHeader : fileHeaders) {
-        if (fileHeader.isDirectory()) {
-          //ignore
-        }
-        else {
-          String entryName = fileHeader.getFileName().replaceAll("\\\\", "/");
-          String suffix = FilenameUtils.getExtension(entryName);
-          boolean isTargetFolder = archiveFolder == null || entryName.startsWith(archiveFolder);
-          if (suffixAllowList.isEmpty() || suffixAllowList.contains(suffix.toLowerCase()) || isTargetFolder) {
-            String itempath = entryName;
-            if (archiveFolder != null) {
-              if (!itempath.startsWith(archiveFolder)) {
-                continue;
+      try (ZipFile zipFile = createZipFile(archiveFile)) {
+          try {
+              List<FileHeader> fileHeaders = zipFile.getFileHeaders();
+              for (FileHeader fileHeader : fileHeaders) {
+                  if (fileHeader.isDirectory()) {
+                      //ignore
+                  } else {
+                      String entryName = fileHeader.getFileName().replaceAll("\\\\", "/");
+                      String suffix = FilenameUtils.getExtension(entryName);
+                      boolean isTargetFolder = archiveFolder == null || entryName.startsWith(archiveFolder);
+                      if (suffixAllowList.isEmpty() || suffixAllowList.contains(suffix.toLowerCase()) || isTargetFolder) {
+                          String itempath = entryName;
+                          if (archiveFolder != null) {
+                              if (!itempath.startsWith(archiveFolder)) {
+                                  continue;
+                              }
+                              itempath = itempath.substring(archiveFolder.length());
+                          }
+                          File target = new File(targetFolder, itempath);
+                          // delete existing file and don't simply write in it
+                          // that would corrupt the file in case conten tto be comied is smaller than previous size
+                          if (target.isFile() && target.exists() && !target.delete()) {
+                              LOG.error("Failed to delete existing unrar target file {}", target.getAbsolutePath());
+                          } else {
+                              // folder creation
+                              File parent = target.getParentFile();
+                              if (!parent.isDirectory() && !parent.mkdirs()) {
+                                  throw new IOException("Failed to create directory " + parent);
+                              }
+                          }
+                          zipFile.extractFile(fileHeader, target.getParentFile().getAbsolutePath(), target.getName());
+                          LOG.info("Encrypted unzipped \"{}\": {}", target.getAbsolutePath(), itempath);
+                      }
+                  }
               }
-              itempath = itempath.substring(archiveFolder.length());
-            }
-            File target = new File(targetFolder, itempath);
-            // delete existing file and don't simply write in it
-            // that would corrupt the file in case conten tto be comied is smaller than previous size
-            if (target.isFile() && target.exists() && !target.delete()) {
-              LOG.error("Failed to delete existing unrar target file {}", target.getAbsolutePath());
-            }
-            else {
-              // folder creation
-              File parent = target.getParentFile();
-              if (!parent.isDirectory() && !parent.mkdirs()) {
-                throw new IOException("Failed to create directory " + parent);
-              }
-            }
-            zipFile.extractFile(fileHeader, target.getParentFile().getAbsolutePath(), target.getName());
-            LOG.info("Encrypted unzipped \"{}\": {}", target.getAbsolutePath(), itempath);
+          } catch (Exception e) {
+              LOG.error("Failed to extract folder {} from {}: {}", archiveFolder, archiveFile.getAbsolutePath(), e.getMessage(), e);
           }
-        }
+      } catch (IOException e) {
+          //ignore
       }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to extract folder {} from {}: {}", archiveFolder, archiveFile.getAbsolutePath(), e.getMessage(), e);
-    }
-    finally {
-      try {
-        zipFile.close();
-      }
-      catch (IOException e) {
-        //ignore
-      }
-    }
     return false;
   }
 
   public static boolean extractFile(File archiveFile, File targetFile, String name) {
-    ZipFile zipFile = createZipFile(archiveFile);
-    FileHeader fileHeader = null;
-    try {
-      fileHeader = zipFile.getFileHeader(name);
-      if (fileHeader == null) {
-        List<FileHeader> fileHeaders = zipFile.getFileHeaders();
-        for (FileHeader header : fileHeaders) {
-          if (header.getFileName().endsWith(name)) {
-            fileHeader = header;
-            break;
+      try (ZipFile zipFile = createZipFile(archiveFile)) {
+           FileHeader fileHeader = null;
+          try {
+              fileHeader = zipFile.getFileHeader(name);
+              if (fileHeader == null) {
+                  List<FileHeader> fileHeaders = zipFile.getFileHeaders();
+                  for (FileHeader header : fileHeaders) {
+                      if (header.getFileName().endsWith(name)) {
+                          fileHeader = header;
+                          break;
+                      }
+                  }
+              }
+
+              if (fileHeader == null) {
+                  LOG.error("No matching file {} found in {}", name, archiveFile.getAbsolutePath());
+                  return false;
+              }
+
+              if (targetFile.exists() && targetFile.isFile() && !targetFile.delete()) {
+                  LOG.error("Failed to delete target extraction file {}", targetFile.getAbsolutePath());
+                  return false;
+              }
+
+              zipFile.extractFile(fileHeader, targetFile.getParentFile().getAbsolutePath(), targetFile.getName());
+              if (targetFile.exists()) {
+                  LOG.info("Written temporary vpa archive file {} / {}", targetFile.getAbsolutePath(), de.mephisto.vpin.restclient.util.FileUtils.readableFileSize(targetFile.length()));
+                  return true;
+              }
+          } catch (Exception e) {
+              LOG.error("Failed to extract {} from {}: {}", fileHeader, archiveFile.getAbsolutePath(), e.getMessage(), e);
           }
-        }
+      } catch (IOException e) {
+          //ignore
       }
-
-      if (fileHeader == null) {
-        LOG.error("No matching file {} found in {}", name, archiveFile.getAbsolutePath());
-        return false;
-      }
-
-      if (targetFile.exists() && targetFile.isFile() && !targetFile.delete()) {
-        LOG.error("Failed to delete target extraction file {}", targetFile.getAbsolutePath());
-        return false;
-      }
-
-      zipFile.extractFile(fileHeader, targetFile.getParentFile().getAbsolutePath(), targetFile.getName());
-      if (targetFile.exists()) {
-        LOG.info("Written temporary vpa archive file {} / {}", targetFile.getAbsolutePath(), de.mephisto.vpin.restclient.util.FileUtils.readableFileSize(targetFile.length()));
-        return true;
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to extract {} from {}: {}", fileHeader, archiveFile.getAbsolutePath(), e.getMessage(), e);
-    }
-    finally {
-      try {
-        zipFile.close();
-      }
-      catch (IOException e) {
-        //ignore
-      }
-    }
     return false;
   }
 
@@ -205,30 +181,24 @@ public class VpxzArchiveUtil {
   }
 
   public static String contains(File file, String suffix) {
-    ZipFile zipFile = createZipFile(file);
-    try {
-      List<FileHeader> fileHeaders = zipFile.getFileHeaders();
-      String contains = null;
-      for (FileHeader fileHeader : fileHeaders) {
-        String name = fileHeader.toString();
-        if (name.equalsIgnoreCase(suffix)) {
-          contains = name;
-          break;
-        }
+      try (ZipFile zipFile = createZipFile(file)) {
+          try {
+              List<FileHeader> fileHeaders = zipFile.getFileHeaders();
+              String contains = null;
+              for (FileHeader fileHeader : fileHeaders) {
+                  String name = fileHeader.toString();
+                  if (name.equalsIgnoreCase(suffix)) {
+                      contains = name;
+                      break;
+                  }
+              }
+              return contains;
+          } catch (Exception e) {
+              LOG.error("Failed to search zip file: {}", e.getMessage(), e);
+          }
+      } catch (IOException e) {
+          //ignore
       }
-      return contains;
-    }
-    catch (Exception e) {
-      LOG.error("Failed to search zip file: {}", e.getMessage(), e);
-    }
-    finally {
-      try {
-        zipFile.close();
-      }
-      catch (IOException e) {
-        //ignore
-      }
-    }
     return null;
   }
 }

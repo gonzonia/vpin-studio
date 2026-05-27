@@ -276,33 +276,25 @@ public class ZipUtil {
 
   public static void zipFolder(File sourceDirPath, File targetZip, ZipProgressable progressable) throws IOException {
     Path p = targetZip.toPath();
-    OutputStream outputStream = null;
-    try {
-      outputStream = Files.newOutputStream(p);
-      ZipOutputStream zs = new ZipOutputStream(outputStream);
-      Path pp = sourceDirPath.toPath();
-      Files.walk(pp)
-          .filter(path -> !Files.isDirectory(path))
-          .forEach(path -> {
-            String zipEntryPath = sourceDirPath.getName() + "/" + pp.relativize(path);
-            ZipEntry zipEntry = new ZipEntry(zipEntryPath);
-            try {
-              zs.putNextEntry(zipEntry);
-              progressable.zipping(path.toFile(), zipEntryPath);
-              Files.copy(path, zs);
-              zs.closeEntry();
-            }
-            catch (IOException e) {
-              LOG.error("Zip failed: " + e.getMessage(), e);
-            }
-          });
-      zs.close();
-    }
-    finally {
-      if (outputStream != null) {
-        outputStream.close();
+      try (OutputStream outputStream = Files.newOutputStream(p)) {
+          ZipOutputStream zs = new ZipOutputStream(outputStream);
+          Path pp = sourceDirPath.toPath();
+          Files.walk(pp)
+                  .filter(path -> !Files.isDirectory(path))
+                  .forEach(path -> {
+                      String zipEntryPath = sourceDirPath.getName() + "/" + pp.relativize(path);
+                      ZipEntry zipEntry = new ZipEntry(zipEntryPath);
+                      try {
+                          zs.putNextEntry(zipEntry);
+                          progressable.zipping(path.toFile(), zipEntryPath);
+                          Files.copy(path, zs);
+                          zs.closeEntry();
+                      } catch (IOException e) {
+                          LOG.error("Zip failed: " + e.getMessage(), e);
+                      }
+                  });
+          zs.close();
       }
-    }
   }
 
 

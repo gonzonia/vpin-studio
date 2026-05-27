@@ -22,9 +22,8 @@ public class FXUtil {
 
     String nodeId;/*from w  w  w.j av a 2s.c om*/
 
-    if (parent instanceof TitledPane) {
-      TitledPane titledPane = (TitledPane) parent;
-      Node content = titledPane.getContent();
+    if (parent instanceof TitledPane titledPane) {
+        Node content = titledPane.getContent();
       nodeId = content.idProperty().get();
 
       if (nodeId != null && nodeId.equals(id)) {
@@ -45,47 +44,50 @@ public class FXUtil {
         return (T) node;
       }
 
-      if (node instanceof SplitPane) {
-        SplitPane splitPane = (SplitPane) node;
-        for (Node itemNode : splitPane.getItems()) {
-          nodeId = itemNode.idProperty().get();
+        switch (node) {
+            case SplitPane splitPane -> {
+                for (Node itemNode : splitPane.getItems()) {
+                    nodeId = itemNode.idProperty().get();
 
-          if (nodeId != null && id.equals(id)) {
-            return (T) itemNode;
-          }
+                    //should this be nodeID?
+                    if (nodeId != null && id.equals(id)) {
+                        return (T) itemNode;
+                    }
 
-          if (itemNode instanceof Parent) {
-            T child = findChildByID((Parent) itemNode, id);
+                    if (itemNode instanceof Parent) {
+                        T child = findChildByID((Parent) itemNode, id);
 
-            if (child != null) {
-              return child;
+                        if (child != null) {
+                            return child;
+                        }
+                    }
+                }
             }
-          }
+            case Accordion accordion -> {
+                for (TitledPane titledPane : accordion.getPanes()) {
+                    nodeId = titledPane.idProperty().get();
+
+                    if (nodeId != null && nodeId.equals(id)) {
+                        return (T) titledPane;
+                    }
+
+                    T child = findChildByID(titledPane, id);
+
+                    if (child != null) {
+                        return child;
+                    }
+                }
+            }
+            case Parent parent1 -> {
+                T child = findChildByID(parent1, id);
+
+                if (child != null) {
+                    return child;
+                }
+            }
+            default -> {
+            }
         }
-      }
-      else if (node instanceof Accordion) {
-        Accordion accordion = (Accordion) node;
-        for (TitledPane titledPane : accordion.getPanes()) {
-          nodeId = titledPane.idProperty().get();
-
-          if (nodeId != null && nodeId.equals(id)) {
-            return (T) titledPane;
-          }
-
-          T child = findChildByID(titledPane, id);
-
-          if (child != null) {
-            return child;
-          }
-        }
-      }
-      else if (node instanceof Parent) {
-        T child = findChildByID((Parent) node, id);
-
-        if (child != null) {
-          return child;
-        }
-      }
     }
     return null;
   }

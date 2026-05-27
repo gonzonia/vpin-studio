@@ -22,9 +22,7 @@ public class ScreenModel {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof ScreenModel)) return false;
-
-    ScreenModel that = (ScreenModel) o;
+    if (!(o instanceof ScreenModel that)) return false;
 
     return id == that.id;
   }

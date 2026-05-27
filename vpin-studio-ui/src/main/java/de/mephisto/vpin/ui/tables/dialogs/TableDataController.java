@@ -973,9 +973,8 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     Node header = stage.getScene().getRoot().lookup("#header");
     Object userData = header.getUserData();
-    if (userData instanceof DialogHeaderController) {
-      DialogHeaderController dialogHeaderController = (DialogHeaderController) userData;
-      dialogHeaderController.enableStateListener(stage, this, "dialog-table-data");
+    if (userData instanceof DialogHeaderController dialogHeaderController) {
+        dialogHeaderController.enableStateListener(stage, this, "dialog-table-data");
     }
 
     this.stage.setOnShowing(new EventHandler<WindowEvent>() {

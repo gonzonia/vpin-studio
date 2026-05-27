@@ -76,17 +76,12 @@ public class IniService {
     iniConfiguration.setSeparatorUsedInOutput(" = ");
     iniConfiguration.setSeparatorUsedInInput("=");
 
-    FileReader fileReader = new FileReader(iniFile, StandardCharsets.UTF_8);
-    try {
-      iniConfiguration.read(fileReader);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to read: {}: {}", iniFile.getAbsolutePath(), e.getMessage(), e);
-      throw e;
-    }
-    finally {
-      fileReader.close();
-    }
+      try (FileReader fileReader = new FileReader(iniFile, StandardCharsets.UTF_8)) {
+          iniConfiguration.read(fileReader);
+      } catch (Exception e) {
+          LOG.error("Failed to read: {}: {}", iniFile.getAbsolutePath(), e.getMessage(), e);
+          throw e;
+      }
 
     return iniConfiguration;
   }
@@ -115,20 +110,14 @@ public class IniService {
   }
 
   private void saveIniFile(File iniFile, INIConfiguration iniConfiguration) throws IOException {
-    FileWriter fileWriter = new FileWriter(iniFile, StandardCharsets.UTF_8);
-    try {
-      iniConfiguration.write(fileWriter);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to write ini: {}", e.getMessage(), e);
-    }
-    finally {
-      try {
-        fileWriter.close();
+      try (FileWriter fileWriter = new FileWriter(iniFile, StandardCharsets.UTF_8)) {
+          try {
+              iniConfiguration.write(fileWriter);
+          } catch (Exception e) {
+              LOG.error("Failed to write ini: {}", e.getMessage(), e);
+          }
+      } catch (IOException e) {
+          //ignore
       }
-      catch (IOException e) {
-        //ignore
-      }
-    }
   }
 }

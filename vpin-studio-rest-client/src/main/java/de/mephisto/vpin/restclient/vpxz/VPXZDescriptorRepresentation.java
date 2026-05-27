@@ -82,9 +82,7 @@ public class VPXZDescriptorRepresentation {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof VPXZDescriptorRepresentation)) return false;
-
-    VPXZDescriptorRepresentation that = (VPXZDescriptorRepresentation) o;
+    if (!(o instanceof VPXZDescriptorRepresentation that)) return false;
 
     return Objects.equals(filename, that.filename);
   }

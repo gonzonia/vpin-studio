@@ -175,10 +175,9 @@ public class NavigationController implements Initializable, StudioEventListener,
 
     if (Studio.stage != null && Studio.stage.getScene() != null) {
       Node lookup = Studio.stage.getScene().lookup("#main");
-      if (lookup instanceof BorderPane) {
-        BorderPane main = (BorderPane) lookup;
+      if (lookup instanceof BorderPane main) {
 
-        if (activeNavigation.getController() != null) {
+          if (activeNavigation.getController() != null) {
           Parent root = activeNavigation.getRoot();
           main.setCenter(root);
           activeNavigation.getController().onViewActivated(options);
@@ -247,9 +246,8 @@ public class NavigationController implements Initializable, StudioEventListener,
         return;
       }
       Node lookup = Studio.stage.getScene().lookup("#breadcrumb");
-      if (lookup instanceof Label) {
-        Label breadCrumb = (Label) lookup;
-        String join = StringUtils.join(crumbs, " / ");
+      if (lookup instanceof Label breadCrumb) {
+          String join = StringUtils.join(crumbs, " / ");
         breadCrumb.setText("/ " + join);
       }
     });

@@ -183,8 +183,7 @@ public class CompetitionsController implements Initializable, StudioFXController
     tableSubscriptionsController.onViewActivated(options);
 
     if (options != null && options.getModel() != null) {
-      if (options.getModel() instanceof CompetitionType) {
-        CompetitionType competitionType = (CompetitionType) options.getModel();
+      if (options.getModel() instanceof CompetitionType competitionType) {
         IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
         WOVPSettings wovpSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
 
@@ -681,49 +680,44 @@ public class CompetitionsController implements Initializable, StudioFXController
   private void updateForTabSelection(Optional<CompetitionRepresentation> competitionRepresentation) {
     Tab tab = tabPane.getSelectionModel().getSelectedItem();
     String title = tab.getText();
-    if (title.equals(TAB_OFFLINE)) {
-      if (competitionRepresentation.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions", competitionRepresentation.get().getName()));
+      switch (title) {
+          case TAB_OFFLINE -> {
+              if (competitionRepresentation.isPresent()) {
+                  NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions", competitionRepresentation.get().getName()));
+              } else {
+                  NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
+              }
+          }
+          case TAB_ONLINE -> {
+              if (competitionRepresentation.isPresent()) {
+                  NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions", competitionRepresentation.get().getName()));
+              } else {
+                  NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
+              }
+          }
+          case TAB_TABLE_SUBS -> {
+              if (competitionRepresentation.isPresent()) {
+                  NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions", competitionRepresentation.get().getName()));
+              } else {
+                  NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
+              }
+          }
+          case TAB_ISCORED -> {
+              if (competitionRepresentation.isPresent()) {
+                  NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions", competitionRepresentation.get().getName()));
+              } else {
+                  NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
+              }
+          }
+          case TAB_WEEKLY -> {
+              if (competitionRepresentation.isPresent()) {
+                  NavigationController.setBreadCrumb(Arrays.asList("Competitions", "WOVP Challenges", competitionRepresentation.get().getName()));
+              } else {
+                  NavigationController.setBreadCrumb(Arrays.asList("Competitions", "WOVP Challenges"));
+              }
+          }
+          default -> throw new UnsupportedOperationException("Invalid tab.");
       }
-      else {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
-      }
-    }
-    else if (title.equals(TAB_ONLINE)) {
-      if (competitionRepresentation.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions", competitionRepresentation.get().getName()));
-      }
-      else {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
-      }
-    }
-    else if (title.equals(TAB_TABLE_SUBS)) {
-      if (competitionRepresentation.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions", competitionRepresentation.get().getName()));
-      }
-      else {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
-      }
-    }
-    else if (title.equals(TAB_ISCORED)) {
-      if (competitionRepresentation.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions", competitionRepresentation.get().getName()));
-      }
-      else {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
-      }
-    }
-    else if (title.equals(TAB_WEEKLY)) {
-      if (competitionRepresentation.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "WOVP Challenges", competitionRepresentation.get().getName()));
-      }
-      else {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "WOVP Challenges"));
-      }
-    }
-    else {
-      throw new UnsupportedOperationException("Invalid tab.");
-    }
   }
 
   private void refreshUsers(Optional<CompetitionRepresentation> cp) {

@@ -64,155 +64,107 @@ public class VPRegFile {
 
   public List<String> getEntries() {
     List<String> result = new ArrayList<>();
-    POIFSFileSystem fs = null;
-    try {
-      fs = new POIFSFileSystem(vpregFile, false);
-      DirectoryEntry root = fs.getRoot();
-      if (root != null) {
-        Iterator<Entry> entries = root.getEntries();
-        while (entries.hasNext()) {
-          result.add(entries.next().getName());
-        }
+     try (POIFSFileSystem fs = new POIFSFileSystem(vpregFile, false)) {
+          DirectoryEntry root = fs.getRoot();
+          if (root != null) {
+              Iterator<Entry> entries = root.getEntries();
+              while (entries.hasNext()) {
+                  result.add(entries.next().getName());
+              }
+          }
+      } catch (Exception e) {
+          LOG.error("Failed to read VPReg: {}", e.getMessage());
       }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to read VPReg: {}", e.getMessage());
-    }
-    finally {
-      if (fs != null) {
-        try {
-          fs.close();
-        }
-        catch (IOException e) {
-          //ignore
-        }
-      }
-    }
-    return result;
+      //ignore
+      return result;
   }
 
   public void dump() {
-    POIFSFileSystem fs = null;
-    try {
-      fs = new POIFSFileSystem(vpregFile, false);
-      DirectoryEntry root = fs.getRoot();
-      if (root != null) {
-        Iterator<Entry> entries = root.getEntries();
-        while (entries.hasNext()) {
-          Entry next = entries.next();
-          String folder = next.getName();
-          System.out.println("/" + folder);
-          if (next.isDirectoryEntry()) {
-            DirectoryEntry child = (DirectoryEntry) next;
-            Iterator<Entry> childEntries = child.getEntries();
-            while (childEntries.hasNext()) {
-              Entry childNext = childEntries.next();
-              String childName = childNext.getName();
+      try (POIFSFileSystem fs = new POIFSFileSystem(vpregFile, false)) {
+          DirectoryEntry root = fs.getRoot();
+          if (root != null) {
+              Iterator<Entry> entries = root.getEntries();
+              while (entries.hasNext()) {
+                  Entry next = entries.next();
+                  String folder = next.getName();
+                  System.out.println("/" + folder);
+                  if (next.isDirectoryEntry()) {
+                      DirectoryEntry child = (DirectoryEntry) next;
+                      Iterator<Entry> childEntries = child.getEntries();
+                      while (childEntries.hasNext()) {
+                          Entry childNext = childEntries.next();
+                          String childName = childNext.getName();
 
-              DocumentNode scoreEntry = (DocumentNode) child.getEntry(childName);
-              DocumentInputStream scoreEntryStream = new DocumentInputStream(scoreEntry);
-              byte[] scoreContent = new byte[scoreEntryStream.available()];
-              scoreEntryStream.read(scoreContent);
-              scoreEntryStream.close();
+                          DocumentNode scoreEntry = (DocumentNode) child.getEntry(childName);
+                          DocumentInputStream scoreEntryStream = new DocumentInputStream(scoreEntry);
+                          byte[] scoreContent = new byte[scoreEntryStream.available()];
+                          scoreEntryStream.read(scoreContent);
+                          scoreEntryStream.close();
 
-              System.out.println("/" + folder + "/" + childName + " => " + new String(scoreContent));
-            }
+                          System.out.println("/" + folder + "/" + childName + " => " + new String(scoreContent));
+                      }
+                  }
+              }
           }
-        }
+      } catch (Exception e) {
+          LOG.error("Failed to read VPReg: {}", e.getMessage());
       }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to read VPReg: {}", e.getMessage());
-    }
-    finally {
-      if (fs != null) {
-        try {
-          fs.close();
-        }
-        catch (IOException e) {
-          //ignore
-        }
-      }
-    }
+      //ignore
   }
 
   public boolean resetHighscores(long score) {
-    POIFSFileSystem fs = null;
-    try {
-      fs = new POIFSFileSystem(vpregFile, false);
-      DirectoryEntry root = fs.getRoot();
-      DirectoryEntry gameFolder = getGameDirectory(root);
-      if (gameFolder != null) {
-        for (VPRegHighscoreAdapter adapter : adapters.values()) {
-          if (adapter.isApplicable(gameFolder)) {
-            LOG.info("Resetting highscore using {}", adapter.getClass().getSimpleName());
-            return adapter.resetHighscore(fs, gameFolder, score);
+      try (POIFSFileSystem fs = new POIFSFileSystem(vpregFile, false)) {
+          DirectoryEntry root = fs.getRoot();
+          DirectoryEntry gameFolder = getGameDirectory(root);
+          if (gameFolder != null) {
+              for (VPRegHighscoreAdapter adapter : adapters.values()) {
+                  if (adapter.isApplicable(gameFolder)) {
+                      LOG.info("Resetting highscore using {}", adapter.getClass().getSimpleName());
+                      return adapter.resetHighscore(fs, gameFolder, score);
+                  }
+              }
+              fs.writeFilesystem();
+              return true;
           }
-        }
-        fs.writeFilesystem();
-        return true;
+      } catch (IOException e) {
+          throw new RuntimeException(e);
       }
-    }
-    catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-    finally {
-      if (fs != null) {
-        try {
-          fs.close();
-        }
-        catch (IOException e) {
-          //ignore
-        }
-      }
-    }
-    return false;
+      //ignore
+      return false;
   }
 
   public String toJson() {
-    POIFSFileSystem fs = null;
-    try {
-      fs = new POIFSFileSystem(vpregFile, true);
-      DirectoryEntry root = fs.getRoot();
+      try (POIFSFileSystem fs = new POIFSFileSystem(vpregFile, true)) {
+          DirectoryEntry root = fs.getRoot();
 
-      DirectoryEntry gameFolder = getGameDirectory(root);
-      Map<String, String> target = new LinkedHashMap<>();
-      if (gameFolder != null) {
-        Set<String> entryNames = gameFolder.getEntryNames();
-        for (String entryName : entryNames) {
-          DocumentEntry documentEntry = (DocumentEntry) gameFolder.getEntry(entryName);
+          DirectoryEntry gameFolder = getGameDirectory(root);
+          Map<String, String> target = new LinkedHashMap<>();
+          if (gameFolder != null) {
+              Set<String> entryNames = gameFolder.getEntryNames();
+              for (String entryName : entryNames) {
+                  DocumentEntry documentEntry = (DocumentEntry) gameFolder.getEntry(entryName);
 
-          DocumentInputStream documentInputStream = new DocumentInputStream(documentEntry);
-          byte[] fieldContent = new byte[documentInputStream.available()];
-          documentInputStream.read(fieldContent);
-          documentInputStream.close();
+                  DocumentInputStream documentInputStream = new DocumentInputStream(documentEntry);
+                  byte[] fieldContent = new byte[documentInputStream.available()];
+                  documentInputStream.read(fieldContent);
+                  documentInputStream.close();
 
-          target.put(entryName, new Base64Encoder().encode(fieldContent));
-        }
+                  target.put(entryName, new Base64Encoder().encode(fieldContent));
+              }
+          }
+
+          ObjectMapper objectMapper = JsonMapper.builder()
+                  .enable(SerializationFeature.INDENT_OUTPUT)
+                  .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+                  .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+                  .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+                  .build();
+          return objectMapper.writeValueAsString(target);
+      } catch (Exception e) {
+          LOG.error("Failed to read VPReg.stg: {}", e.getMessage(), e);
       }
-
-      ObjectMapper objectMapper = JsonMapper.builder()
-          .enable(SerializationFeature.INDENT_OUTPUT)
-          .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
-          .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
-          .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
-          .build();
-      return objectMapper.writeValueAsString(target);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to read VPReg.stg: {}", e.getMessage(), e);
-    }
-    finally {
-      if (fs != null) {
-        try {
-          fs.close();
-        }
-        catch (IOException e) {
-          //ignore
-        }
-      }
-    }
-    return null;
+      //ignore
+      return null;
   }
 
   public void restore(String data) {
@@ -269,67 +221,43 @@ public class VPRegFile {
       return;
     }
 
-    POIFSFileSystem fs = null;
-    try {
-      fs = new POIFSFileSystem(vpregFile, true);
-      DirectoryEntry root = fs.getRoot();
-      DirectoryEntry gameFolder = getGameDirectory(root);
-      if (gameFolder != null) {
-        for (VPRegHighscoreAdapter adapter : adapters.values()) {
-          if (adapter.isApplicable(gameFolder)) {
-            scoreParsingSummary = adapter.readHighscore(gameFolder);
-            break;
+      try (POIFSFileSystem fs = new POIFSFileSystem(vpregFile, true)) {
+          DirectoryEntry root = fs.getRoot();
+          DirectoryEntry gameFolder = getGameDirectory(root);
+          if (gameFolder != null) {
+              for (VPRegHighscoreAdapter adapter : adapters.values()) {
+                  if (adapter.isApplicable(gameFolder)) {
+                      scoreParsingSummary = adapter.readHighscore(gameFolder);
+                      break;
+                  }
+              }
           }
-        }
+      } catch (Exception e) {
+          LOG.error("Failed to read VPReg.stg: {}", e.getMessage(), e);
       }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to read VPReg.stg: {}", e.getMessage(), e);
-    }
-    finally {
-      if (fs != null) {
-        try {
-          fs.close();
-        }
-        catch (IOException e) {
-          //ignore
-        }
-      }
-    }
+      //ignore
   }
 
   public void deleteEntry(String amh) {
-    POIFSFileSystem fs = null;
-    try {
-      fs = new POIFSFileSystem(vpregFile, false);
-      DirectoryEntry root = fs.getRoot();
-      DirectoryEntry gameFolder = getGameDirectory(root);
-      if (gameFolder != null) {
-        List<String> entryNames = new ArrayList<>(gameFolder.getEntryNames());
-        for (String entryName : entryNames) {
-          Entry next = gameFolder.getEntry(entryName);
-          next.delete();
-          LOG.info("Deleted {}", next.getName());
-        }
-        gameFolder.delete();
-        LOG.info("Deleted all entries for {}", gameFolder.getName());
-      }
+      try (POIFSFileSystem fs = new POIFSFileSystem(vpregFile, false)) {
+          DirectoryEntry root = fs.getRoot();
+          DirectoryEntry gameFolder = getGameDirectory(root);
+          if (gameFolder != null) {
+              List<String> entryNames = new ArrayList<>(gameFolder.getEntryNames());
+              for (String entryName : entryNames) {
+                  Entry next = gameFolder.getEntry(entryName);
+                  next.delete();
+                  LOG.info("Deleted {}", next.getName());
+              }
+              gameFolder.delete();
+              LOG.info("Deleted all entries for {}", gameFolder.getName());
+          }
 
-      fs.writeFilesystem();
-    }
-    catch (Exception e) {
-      LOG.error("Failed to deleting entry from VPReg.stg: {}", e.getMessage(), e);
-    }
-    finally {
-      if (fs != null) {
-        try {
-          fs.close();
-        }
-        catch (IOException e) {
-          //ignore
-        }
+          fs.writeFilesystem();
+      } catch (Exception e) {
+          LOG.error("Failed to deleting entry from VPReg.stg: {}", e.getMessage(), e);
       }
-    }
+      //ignore
   }
 
   /**
@@ -404,9 +332,7 @@ public class VPRegFile {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof VPRegFile)) return false;
-
-    VPRegFile vpRegFile = (VPRegFile) o;
+    if (!(o instanceof VPRegFile vpRegFile)) return false;
 
     return vpregFile.equals(vpRegFile.vpregFile);
   }

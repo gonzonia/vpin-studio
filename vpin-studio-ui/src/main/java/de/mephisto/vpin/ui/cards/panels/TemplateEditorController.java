@@ -394,7 +394,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     assignTemplate(newTemplate);
   }
 
-  ;
+
 
   @FXML
   private void onRename(ActionEvent e) {
@@ -1048,9 +1048,8 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     for (PositionResizer dragBox : dragBoxes) {
       dragBox.removeFromPane(cardPreview);
 
-      if (dragBox.getUserData() instanceof CardLayer) {
-        CardLayer layer = (CardLayer) dragBox.getUserData();
-        layerToController(layer).unbindDragBox(dragBox);
+      if (dragBox.getUserData() instanceof CardLayer layer) {
+          layerToController(layer).unbindDragBox(dragBox);
       }
     }
     dragBoxes.clear();
@@ -1109,8 +1108,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   public void deselectLayer(LayerEditorBaseController controller) {
     for (Iterator<PositionResizer> iter = dragBoxes.iterator(); iter.hasNext(); ) {
       PositionResizer dragBox = iter.next();
-      if (dragBox.getUserData() instanceof CardLayer) {
-        CardLayer layer = (CardLayer) dragBox.getUserData();
+      if (dragBox.getUserData() instanceof CardLayer layer) {
         LayerEditorBaseController associatedController = layerToController(layer);
         if (associatedController == controller) {
           dragBox.removeFromPane(cardPreview);

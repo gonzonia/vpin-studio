@@ -29,8 +29,7 @@ public class GameSerializer extends ValueSerializer<Game> {
     public void serialize(Game game, JsonGenerator gen, SerializationContext context) throws JacksonException {
         gen.writeStartObject();
 
-        if (defaultSerializer instanceof BeanSerializerBase) {
-            BeanSerializerBase beanSerializer = (BeanSerializerBase) defaultSerializer;
+        if (defaultSerializer instanceof BeanSerializerBase beanSerializer) {
             Iterator<PropertyWriter> it = beanSerializer.properties();
             while (it.hasNext()) {
                 PropertyWriter writer = it.next();

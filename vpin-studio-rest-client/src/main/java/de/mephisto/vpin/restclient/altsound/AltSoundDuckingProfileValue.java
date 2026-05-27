@@ -23,9 +23,7 @@ public class AltSoundDuckingProfileValue {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof AltSoundDuckingProfileValue)) return false;
-
-    AltSoundDuckingProfileValue that = (AltSoundDuckingProfileValue) o;
+    if (!(o instanceof AltSoundDuckingProfileValue that)) return false;
 
     return sampleType == that.sampleType;
   }

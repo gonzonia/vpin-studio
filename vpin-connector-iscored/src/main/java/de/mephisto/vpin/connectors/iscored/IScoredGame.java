@@ -198,9 +198,7 @@ public class IScoredGame {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof IScoredGame)) return false;
-
-    IScoredGame game = (IScoredGame) o;
+    if (!(o instanceof IScoredGame game)) return false;
 
     if (id != game.id) return false;
     return Objects.equals(name, game.name);

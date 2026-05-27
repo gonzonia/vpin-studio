@@ -61,9 +61,7 @@ public class AltSound2DuckingProfile {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof AltSound2DuckingProfile)) return false;
-
-    AltSound2DuckingProfile that = (AltSound2DuckingProfile) o;
+    if (!(o instanceof AltSound2DuckingProfile that)) return false;
 
     if (id != that.id) return false;
     return type == that.type;

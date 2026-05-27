@@ -56,14 +56,10 @@ public class TableAssetSearch {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof TableAssetSearch)) return false;
-
-    TableAssetSearch that = (TableAssetSearch) o;
+    if (!(o instanceof TableAssetSearch that)) return false;
 
     if (screen != that.screen) return false;
-    if (term != null ? !term.equals(that.term) : that.term != null) return false;
-
-    return true;
+    return term != null ? term.equals(that.term) : that.term == null;
   }
 
   @Override

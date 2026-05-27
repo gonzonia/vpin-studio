@@ -70,11 +70,9 @@ public class VpsTableVersion extends VpsAuthoredUrls {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof VpsTableVersion)) return false;
+    if (!(o instanceof VpsTableVersion that)) return false;
 
-    VpsTableVersion that = (VpsTableVersion) o;
-
-    return Objects.equals(getId(), that.getId());
+      return Objects.equals(getId(), that.getId());
   }
 
   @Override

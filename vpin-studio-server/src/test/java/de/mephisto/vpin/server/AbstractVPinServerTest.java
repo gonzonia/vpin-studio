@@ -147,9 +147,8 @@ abstract public class AbstractVPinServerTest {
 
       // configure popper global settings for tests
       JsonSettings settings = frontendService.getSettings();
-      if (settings instanceof PopperSettings) {
-        PopperSettings popperSettings = (PopperSettings) settings;
-        popperSettings.setGlobalMediaDir("../testsystem/vPinball/PinUPSystem/POPMedia/Default");
+      if (settings instanceof PopperSettings popperSettings) {
+          popperSettings.setGlobalMediaDir("../testsystem/vPinball/PinUPSystem/POPMedia/Default");
         frontendService.saveSettings(popperSettings);
       }
 

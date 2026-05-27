@@ -15,45 +15,23 @@ public class ExportEntityConverter {
   private final static Logger LOG = LoggerFactory.getLogger(ExportEntityConverter.class);
 
   public static String convert(String name, Object property) {
-    if (property instanceof String) {
-
-    }
-    else if (property instanceof Boolean) {
-
-    }
-    else if (property instanceof Integer) {
-
-    }
-    else if (property instanceof Long) {
-
-    }
-    else if (property instanceof File) {
-      File f = (File) property;
-      property = f.exists();
-    }
-    else if (property instanceof ValidationState) {
-      ValidationState s = (ValidationState) property;
-      property = s.getCode();
-    }
-    else if (property instanceof OffsetDateTime) {
-      OffsetDateTime s = (OffsetDateTime) property;
-      property = DateUtil.formatDateTime(s);
-    }
-    else if (property instanceof HighscoreType) {
-      HighscoreType s = (HighscoreType) property;
-      property = s.name();
-    }
-    else if (property instanceof AltColorTypes) {
-      AltColorTypes s = (AltColorTypes) property;
-      property = s.name();
-    }
-    else if (property instanceof GameEmulator) {
-      GameEmulator s = (GameEmulator) property;
-      property = s.getName();
-    }
-    else {
-      LOG.warn("Unmapped field type: {}, field name:{}", property.getClass().getSimpleName(), name);
-    }
+      switch (property) {
+          case String string -> {
+          }
+          case Boolean b -> {
+          }
+          case Integer i -> {
+          }
+          case Long l -> {
+          }
+          case File f -> property = f.exists();
+          case ValidationState s -> property = s.getCode();
+          case OffsetDateTime s -> property = DateUtil.formatDateTime(s);
+          case HighscoreType s -> property = s.name();
+          case AltColorTypes s -> property = s.name();
+          case GameEmulator s -> property = s.getName();
+          default -> LOG.warn("Unmapped field type: {}, field name:{}", property.getClass().getSimpleName(), name);
+      }
     return String.valueOf(property)
         .replaceAll("\n", " ")
         .replaceAll("\r", "")

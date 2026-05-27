@@ -20,9 +20,7 @@ public class TableStatus {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof TableStatus)) return false;
-
-    TableStatus that = (TableStatus) o;
+    if (!(o instanceof TableStatus that)) return false;
 
     return value == that.value;
   }

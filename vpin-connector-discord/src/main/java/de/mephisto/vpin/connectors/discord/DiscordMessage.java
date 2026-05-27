@@ -61,16 +61,14 @@ public class DiscordMessage {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof DiscordMessage)) return false;
-
-    DiscordMessage that = (DiscordMessage) o;
+    if (!(o instanceof DiscordMessage that)) return false;
 
     return id == that.id;
   }
 
   @Override
   public int hashCode() {
-    return (int) (id ^ (id >>> 32));
+    return Long.hashCode(id);
   }
 
   @Override

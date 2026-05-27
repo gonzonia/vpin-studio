@@ -75,15 +75,13 @@ public class MediaViewPane extends Pane {
       mediaViewHeight = forSwitch;
     }
 
-    if (child instanceof ImageView) {
-      ImageView imageView = ((ImageView) child);
+    if (child instanceof ImageView imageView) {
       imageView.setFitWidth(mediaViewWidth);
       imageView.setFitHeight(mediaViewHeight);
       super.layoutInArea(child, 0, 0, width, height, 0, HPos.CENTER, VPos.CENTER);
     }
-    else if (child instanceof MediaView) {
-      MediaView mediaView = ((MediaView) child);
-      mediaView.setFitWidth(mediaViewWidth);
+    else if (child instanceof MediaView mediaView) {
+        mediaView.setFitWidth(mediaViewWidth);
       mediaView.setFitHeight(mediaViewHeight);
       super.layoutInArea(child, 0, 0, width, height, 0, HPos.CENTER, VPos.CENTER);
     }

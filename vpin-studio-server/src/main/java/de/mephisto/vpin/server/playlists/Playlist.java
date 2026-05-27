@@ -183,9 +183,7 @@ public class Playlist {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof Playlist)) return false;
-
-    Playlist playlist = (Playlist) o;
+    if (!(o instanceof Playlist playlist)) return false;
 
     return id == playlist.id;
   }

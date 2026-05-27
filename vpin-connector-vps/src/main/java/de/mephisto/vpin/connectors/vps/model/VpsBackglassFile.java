@@ -7,9 +7,7 @@ public class VpsBackglassFile extends VpsAuthoredUrls {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof VpsBackglassFile)) return false;
-
-    VpsBackglassFile that = (VpsBackglassFile) o;
+    if (!(o instanceof VpsBackglassFile that)) return false;
 
     return Objects.equals(getId(), that.getId());
   }

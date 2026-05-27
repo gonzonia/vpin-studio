@@ -53,13 +53,9 @@ public class AltSoundLoaderFactory {
         iniConfiguration.setSeparatorUsedInOutput("=");
         iniConfiguration.setSeparatorUsedInInput("=");
 
-        FileReader fileReader = new FileReader(ini);
-        try {
-          iniConfiguration.read(fileReader);
-        }
-        finally {
-          fileReader.close();
-        }
+          try (FileReader fileReader = new FileReader(ini)) {
+              iniConfiguration.read(fileReader);
+          }
 
         SubnodeConfiguration formatNode = iniConfiguration.getSection("format");
         if (formatNode != null) {

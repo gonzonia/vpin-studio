@@ -298,72 +298,56 @@ public class UploaderAnalysis {
 
   private void analyzeZip() throws IOException {
     long analysisStart = System.currentTimeMillis();
-    FileInputStream fileInputStream = null;
-    ZipInputStream zis = null;
-    try {
-      fileInputStream = new FileInputStream(file);
-      zis = new ZipInputStream(fileInputStream);
-      ZipEntry nextEntry = zis.getNextEntry();
-      while (nextEntry != null) {
-        analyze(zis, nextEntry, nextEntry.getName(), nextEntry.isDirectory(), nextEntry.getSize());
-        zis.closeEntry();
-        nextEntry = zis.getNextEntry();
+      ZipInputStream zis = null;
+      try (FileInputStream fileInputStream = new FileInputStream(file)) {
+          zis = new ZipInputStream(fileInputStream);
+          ZipEntry nextEntry = zis.getNextEntry();
+          while (nextEntry != null) {
+              analyze(zis, nextEntry, nextEntry.getName(), nextEntry.isDirectory(), nextEntry.getSize());
+              zis.closeEntry();
+              nextEntry = zis.getNextEntry();
+          }
+          zis.close();
+          fileInputStream.close();
+      } catch (Exception e) {
+          LOG.error("Failed to open " + file.getAbsolutePath());
+          throw e;
+      } finally {
+          LOG.info("Analysis finished, took " + (System.currentTimeMillis() - analysisStart) + " ms.");
       }
-      zis.close();
-      fileInputStream.close();
-    }
-    catch (Exception e) {
-      LOG.error("Failed to open " + file.getAbsolutePath());
-      throw e;
-    }
-    finally {
-      if (fileInputStream != null) {
-        fileInputStream.close();
-      }
-      LOG.info("Analysis finished, took " + (System.currentTimeMillis() - analysisStart) + " ms.");
-    }
   }
 
   private void analyzeVpa() throws IOException {
     long analysisStart = System.currentTimeMillis();
-    ZipFile zipFile = VpaArchiveUtil.createZipFile(file);
-    try {
-      List<FileHeader> fileHeaders = zipFile.getFileHeaders();
-      for (FileHeader nextEntry : fileHeaders) {
-        analyze(zipFile, nextEntry);
+      try (ZipFile zipFile = VpaArchiveUtil.createZipFile(file)) {
+          List<FileHeader> fileHeaders = zipFile.getFileHeaders();
+          for (FileHeader nextEntry : fileHeaders) {
+              analyze(zipFile, nextEntry);
+          }
+      } catch (Exception e) {
+          LOG.error("Failed to open " + file.getAbsolutePath());
+          throw e;
+      } finally {
+          LOG.info("Analysis finished, took " + (System.currentTimeMillis() - analysisStart) + " ms.");
       }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to open " + file.getAbsolutePath());
-      throw e;
-    }
-    finally {
-      LOG.info("Analysis finished, took " + (System.currentTimeMillis() - analysisStart) + " ms.");
-      zipFile.close();
-    }
   }
 
   private void analyzeRar() throws IOException {
     long analysisStart = System.currentTimeMillis();
     RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
-    RandomAccessFileInStream randomAccessFileStream = new RandomAccessFileInStream(randomAccessFile);
-    try {
-      IInArchive inArchive = SevenZip.openInArchive(null, randomAccessFileStream);
-      for (ISimpleInArchiveItem item : inArchive.getSimpleInterface().getArchiveItems()) {
-        analyze(inArchive, item, item.getPath(), item.isFolder(), item.getSize());
+      try (randomAccessFile; RandomAccessFileInStream randomAccessFileStream = new RandomAccessFileInStream(randomAccessFile)) {
+          IInArchive inArchive = SevenZip.openInArchive(null, randomAccessFileStream);
+          for (ISimpleInArchiveItem item : inArchive.getSimpleInterface().getArchiveItems()) {
+              analyze(inArchive, item, item.getPath(), item.isFolder(), item.getSize());
+          }
+          inArchive.close();
+          randomAccessFileStream.close();
+          randomAccessFile.close();
+      } catch (Exception e) {
+          LOG.error("Failed to open " + file.getAbsolutePath());
+      } finally {
+          LOG.info("Analysis finished, took " + (System.currentTimeMillis() - analysisStart) + " ms.");
       }
-      inArchive.close();
-      randomAccessFileStream.close();
-      randomAccessFile.close();
-    }
-    catch (Exception e) {
-      LOG.error("Failed to open " + file.getAbsolutePath());
-    }
-    finally {
-      randomAccessFileStream.close();
-      randomAccessFile.close();
-      LOG.info("Analysis finished, took " + (System.currentTimeMillis() - analysisStart) + " ms.");
-    }
   }
 
   public void analyze(IInArchive in, ISimpleInArchiveItem archiveEntry, String name, boolean directory, long size) {

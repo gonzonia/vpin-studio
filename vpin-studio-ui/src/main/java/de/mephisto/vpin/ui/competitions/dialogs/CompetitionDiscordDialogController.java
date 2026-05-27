@@ -598,9 +598,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     @Override
     public boolean equals(Object o) {
       if (this == o) return true;
-      if (!(o instanceof JoinModel)) return false;
-
-      JoinModel joinModel = (JoinModel) o;
+      if (!(o instanceof JoinModel joinModel)) return false;
 
       return mode == joinModel.mode;
     }

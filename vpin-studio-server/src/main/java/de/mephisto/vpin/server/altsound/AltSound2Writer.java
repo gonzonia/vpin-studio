@@ -38,12 +38,9 @@ public class AltSound2Writer {
         iniConfiguration.setSeparatorUsedInOutput("=");
         iniConfiguration.setSeparatorUsedInInput("=");
 
-        FileReader fileReader = new FileReader(ini);
-        try {
-          iniConfiguration.read(fileReader);
-        } finally {
-          fileReader.close();
-        }
+          try (FileReader fileReader = new FileReader(ini)) {
+              iniConfiguration.read(fileReader);
+          }
 
         SubnodeConfiguration systemNode = iniConfiguration.getSection("system");
         systemNode.setProperty("record_sound_cmds", altSound.isRecordSoundCmds() ? "1" : "0");
@@ -70,14 +67,11 @@ public class AltSound2Writer {
             //write CSV file
             org.apache.commons.io.FileUtils.writeStringToFile(gSoundCsv, altSound.toGSoundCSV(), StandardCharsets.UTF_8);
 
-            FileWriter fileWriter = new FileWriter(ini);
-            try {
-              iniConfiguration.write(fileWriter);
-            } catch (Exception e) {
-              LOG.error("Failed to write altsound.ini: {}", e.getMessage(), e);
-            } finally {
-              fileWriter.close();
-            }
+              try (FileWriter fileWriter = new FileWriter(ini)) {
+                  iniConfiguration.write(fileWriter);
+              } catch (Exception e) {
+                  LOG.error("Failed to write altsound.ini: {}", e.getMessage(), e);
+              }
           }
           else if (altSoundCsv.exists()) {
             new AltSoundWriter(altSoundFolder).write(altSound);

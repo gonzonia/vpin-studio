@@ -73,9 +73,7 @@ public class BackupDescriptorRepresentation {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof BackupDescriptorRepresentation)) return false;
-
-    BackupDescriptorRepresentation that = (BackupDescriptorRepresentation) o;
+    if (!(o instanceof BackupDescriptorRepresentation that)) return false;
 
     return Objects.equals(filename, that.filename);
   }

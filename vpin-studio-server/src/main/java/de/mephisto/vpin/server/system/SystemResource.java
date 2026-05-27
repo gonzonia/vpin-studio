@@ -147,8 +147,7 @@ public class SystemResource {
 //      }
 
       FrontendConnector frontendConnector = frontendService.getFrontendConnector();
-      if (frontendConnector instanceof PinUPConnector) {
-        PinUPConnector pinUPConnector = (PinUPConnector) frontendConnector;
+      if (frontendConnector instanceof PinUPConnector pinUPConnector) {
         File popperDB = pinUPConnector.getDatabaseFile();
         if (popperDB.exists()) {
           ZipUtil.zipFile(popperDB, popperDB.getName(), zipOut);

@@ -72,41 +72,29 @@ public class HighscoreToRawTest {
       if (scoringDB.getIgnoredTextFiles().contains(entry.getName())) {
         continue;
       }
-      FileInputStream fileInputStream = null;
-      try {
-        fileInputStream = new FileInputStream(entry);
-        List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
-        File resetFile = new File(entry.getParentFile(), entry.getName() + ".reset");
-        if (!resetFile.exists()) {
-          System.out.println("No reset file found for " + resetFile.getAbsolutePath());
-          continue;
-        }
-        assertTrue(resetFile.exists());
-        String resettedTemplate = FileUtils.readFileToString(resetFile, StandardCharsets.UTF_8.name());
+        try (FileInputStream fileInputStream = new FileInputStream(entry)) {
+            List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
+            File resetFile = new File(entry.getParentFile(), entry.getName() + ".reset");
+            if (!resetFile.exists()) {
+                System.out.println("No reset file found for " + resetFile.getAbsolutePath());
+                continue;
+            }
+            assertTrue(resetFile.exists());
+            String resettedTemplate = FileUtils.readFileToString(resetFile, StandardCharsets.UTF_8.name());
 
-        for (ScoreTextFileAdapter adapter : adapters) {
-          if (adapter.isApplicable(entry, lines)) {
-            List<String> resettedLines = adapter.resetHighscore(entry, lines, 0);
+            for (ScoreTextFileAdapter adapter : adapters) {
+                if (adapter.isApplicable(entry, lines)) {
+                    List<String> resettedLines = adapter.resetHighscore(entry, lines, 0);
 
-            String resetted = String.join("\r\n", resettedLines) + "\r\n";
-            assertEquals(resettedTemplate, resetted, "Mismatch for " + entry.getName() + ", used adapter " + adapter.getClass().getSimpleName());
-            break;
-          }
+                    String resetted = String.join("\r\n", resettedLines) + "\r\n";
+                    assertEquals(resettedTemplate, resetted, "Mismatch for " + entry.getName() + ", used adapter " + adapter.getClass().getSimpleName());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-      }
-      catch (Exception e) {
-        e.printStackTrace();
-      }
-      finally {
-        if (fileInputStream != null) {
-          try {
-            fileInputStream.close();
-          }
-          catch (IOException e) {
-            //ignore
-          }
-        }
-      }
+        //ignore
     }
     System.out.println("Tested " + count + " entries");
 

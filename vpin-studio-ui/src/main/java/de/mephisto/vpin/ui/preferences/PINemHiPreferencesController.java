@@ -358,9 +358,7 @@ public class PINemHiPreferencesController implements Initializable, IniSettingsC
     @Override
     public boolean equals(Object o) {
       if (this == o) return true;
-      if (!(o instanceof Voice)) return false;
-
-      Voice voice = (Voice) o;
+      if (!(o instanceof Voice voice)) return false;
 
       return id == voice.id;
     }
@@ -396,9 +394,7 @@ public class PINemHiPreferencesController implements Initializable, IniSettingsC
     @Override
     public boolean equals(Object o) {
       if (this == o) return true;
-      if (!(o instanceof ChallengeSkill)) return false;
-
-      ChallengeSkill that = (ChallengeSkill) o;
+      if (!(o instanceof ChallengeSkill that)) return false;
 
       return id == that.id;
     }

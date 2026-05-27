@@ -78,9 +78,7 @@ public class HighscoreBackup {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof HighscoreBackup)) return false;
-
-    HighscoreBackup that = (HighscoreBackup) o;
+    if (!(o instanceof HighscoreBackup that)) return false;
 
     return filename.equals(that.filename);
   }

@@ -146,9 +146,7 @@ public class MonitorInfo {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof MonitorInfo)) return false;
-
-    MonitorInfo that = (MonitorInfo) o;
+    if (!(o instanceof MonitorInfo that)) return false;
 
     return id == that.id;
   }

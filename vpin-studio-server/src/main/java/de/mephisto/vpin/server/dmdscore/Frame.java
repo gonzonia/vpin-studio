@@ -54,9 +54,8 @@ public class Frame {
   }
 
   public boolean equals(Object o) {
-    if (o instanceof Frame) {
-      Frame that = (Frame) o;
-      return this.type.equals(that.type) && Arrays.equals(this.plane, that.plane);
+    if (o instanceof Frame that) {
+        return this.type.equals(that.type) && Arrays.equals(this.plane, that.plane);
     }
     return false;
   }

@@ -660,9 +660,8 @@ public class WidgetFactory {
     Object userData = header.getUserData();
     boolean resizeable = userData instanceof DialogHeaderResizeableController;
 
-    if (userData instanceof DialogHeaderController) {
-      DialogHeaderController dialogHeaderController = (DialogHeaderController) userData;
-      dialogHeaderController.setStage(stage);
+    if (userData instanceof DialogHeaderController dialogHeaderController) {
+        dialogHeaderController.setStage(stage);
       dialogHeaderController.setTitle(title);
       dialogHeaderController.setModal(modalStateId == null || LocalUISettings.isModal(modalStateId));
       stage.setOnShowing(new EventHandler<WindowEvent>() {

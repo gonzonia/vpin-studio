@@ -54,20 +54,17 @@ public class RequestUtil {
 
   public static ResponseEntity<byte[]> serializeImage(@Nullable File file) throws Exception {
     if (file != null && file.exists()) {
-      BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
-      try {
-        return ResponseEntity.ok()
-            .lastModified(file.lastModified())
-            .contentType(MediaType.parseMediaType("image/" + FilenameUtils.getExtension(file.getName())))
-            .contentLength(file.length())
-            .cacheControl(CacheControl.maxAge(3600 * 24 * 7, TimeUnit.SECONDS).cachePublic())
-            .body(IOUtils.toByteArray(in));
-      } catch (Exception e) {
-        LOG.error("Failed to serialize image {}: {}", file.getAbsolutePath(), e.getMessage(), e);
-        throw e;
-      } finally {
-        in.close();
-      }
+        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+            return ResponseEntity.ok()
+                    .lastModified(file.lastModified())
+                    .contentType(MediaType.parseMediaType("image/" + FilenameUtils.getExtension(file.getName())))
+                    .contentLength(file.length())
+                    .cacheControl(CacheControl.maxAge(3600 * 24 * 7, TimeUnit.SECONDS).cachePublic())
+                    .body(IOUtils.toByteArray(in));
+        } catch (Exception e) {
+            LOG.error("Failed to serialize image {}: {}", file.getAbsolutePath(), e.getMessage(), e);
+            throw e;
+        }
       //ignore
     }
     else {

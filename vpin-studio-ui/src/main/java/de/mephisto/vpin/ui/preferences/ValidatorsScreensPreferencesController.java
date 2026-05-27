@@ -244,9 +244,8 @@ public class ValidatorsScreensPreferencesController implements Initializable {
 
   private static void findAllScreenCheckboxes(Parent parent, List<CheckBox> settingsCheckboxes) {
     for (Node node : parent.getChildrenUnmodifiable()) {
-      if (node instanceof CheckBox) {
-        CheckBox checkBox = (CheckBox) node;
-        if (checkBox.getId() != null && !checkBox.getId().startsWith("Tag")) {
+      if (node instanceof CheckBox checkBox) {
+          if (checkBox.getId() != null && !checkBox.getId().startsWith("Tag")) {
           settingsCheckboxes.add(checkBox);
         }
       }
@@ -258,9 +257,8 @@ public class ValidatorsScreensPreferencesController implements Initializable {
 
   private static void findAllTaggingCheckboxes(Parent parent, Map<VPinScreen, CheckBox> taggingCheckboxes) {
     for (Node node : parent.getChildrenUnmodifiable()) {
-      if (node instanceof CheckBox) {
-        CheckBox checkBox = (CheckBox) node;
-        if (checkBox.getId() != null && checkBox.getId().startsWith("Tag")) {
+      if (node instanceof CheckBox checkBox) {
+          if (checkBox.getId() != null && checkBox.getId().startsWith("Tag")) {
           int validationCode = getValidationCode(checkBox.getId());
           VPinScreen screenForCode = getScreenForCode(validationCode);
           taggingCheckboxes.put(screenForCode, checkBox);
@@ -274,9 +272,8 @@ public class ValidatorsScreensPreferencesController implements Initializable {
 
   private static void findAllOptionsCombos(Parent parent, Map<String, ComboBox> optionComboBoxes) {
     for (Node node : parent.getChildrenUnmodifiable()) {
-      if (node instanceof ComboBox) {
-        ComboBox comboBox = (ComboBox) node;
-        if (comboBox.getId() != null && comboBox.getId().contains("Options")) {
+      if (node instanceof ComboBox comboBox) {
+          if (comboBox.getId() != null && comboBox.getId().contains("Options")) {
           optionComboBoxes.put(comboBox.getId(), comboBox);
         }
       }
@@ -288,9 +285,8 @@ public class ValidatorsScreensPreferencesController implements Initializable {
 
   private static void findAllMediaCombos(Parent parent, Map<String, ComboBox> mediaComboBoxes) {
     for (Node node : parent.getChildrenUnmodifiable()) {
-      if (node instanceof ComboBox) {
-        ComboBox comboBox = (ComboBox) node;
-        if (comboBox.getId() != null && comboBox.getId().contains("Media")) {
+      if (node instanceof ComboBox comboBox) {
+          if (comboBox.getId() != null && comboBox.getId().contains("Media")) {
           mediaComboBoxes.put(comboBox.getId(), comboBox);
         }
       }

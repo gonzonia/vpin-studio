@@ -116,9 +116,8 @@ public class ValidatorsVPXPreferencesController implements Initializable {
 
   private static void findAllCheckboxes(Parent parent, List<CheckBox> settingsCheckboxes) {
     for (Node node : parent.getChildrenUnmodifiable()) {
-      if (node instanceof CheckBox) {
-        CheckBox checkBox = (CheckBox) node;
-        if (checkBox.getId() != null) {
+      if (node instanceof CheckBox checkBox) {
+          if (checkBox.getId() != null) {
           settingsCheckboxes.add(checkBox);
         }
       }

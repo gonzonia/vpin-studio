@@ -60,23 +60,17 @@ public class Downloader {
       tmp.delete();
     }
 
-    FileOutputStream fileOutputStream = null;
-    try {
-      fileOutputStream = new FileOutputStream(tmp);
-      byte dataBuffer[] = new byte[1024];
-      int bytesRead;
-      while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-        fileOutputStream.write(dataBuffer, 0, bytesRead);
+      try (FileOutputStream fileOutputStream = new FileOutputStream(tmp)) {
+          byte dataBuffer[] = new byte[1024];
+          int bytesRead;
+          while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+              fileOutputStream.write(dataBuffer, 0, bytesRead);
+          }
+          in.close();
+          fileOutputStream.close();
+          installLog.log("Download finished, read " + readableFileSize(tmp.length()) + ".");
+          LOG.info("Download finished, read " + readableFileSize(tmp.length()) + ".");
       }
-      in.close();
-      fileOutputStream.close();
-      installLog.log("Download finished, read " + readableFileSize(tmp.length()) + ".");
-      LOG.info("Download finished, read " + readableFileSize(tmp.length()) + ".");
-    } finally {
-      if (fileOutputStream != null) {
-        fileOutputStream.close();
-      }
-    }
 
     if (!tmp.renameTo(targetFile)) {
       installLog.setStatus("Failed to rename download temp file " + tmp.getAbsolutePath() + " to " + targetFile.getAbsolutePath());

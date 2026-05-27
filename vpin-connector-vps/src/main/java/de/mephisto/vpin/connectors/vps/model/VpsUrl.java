@@ -23,9 +23,7 @@ public class VpsUrl {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof VpsUrl)) return false;
-
-    VpsUrl vpsUrl = (VpsUrl) o;
+    if (!(o instanceof VpsUrl vpsUrl)) return false;
 
     return url.equals(vpsUrl.url);
   }

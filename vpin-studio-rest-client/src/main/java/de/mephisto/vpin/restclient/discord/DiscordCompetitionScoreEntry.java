@@ -32,9 +32,7 @@ public class DiscordCompetitionScoreEntry {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof DiscordCompetitionScoreEntry)) return false;
-
-    DiscordCompetitionScoreEntry that = (DiscordCompetitionScoreEntry) o;
+    if (!(o instanceof DiscordCompetitionScoreEntry that)) return false;
 
     if (p != that.p) return false;
     if (!i.equals(that.i)) return false;

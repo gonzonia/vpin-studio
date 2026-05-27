@@ -100,9 +100,7 @@ public class Notification {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof Notification)) return false;
-
-    Notification that = (Notification) o;
+    if (!(o instanceof Notification that)) return false;
 
     if (!Objects.equals(title1, that.title1)) return false;
     if (!Objects.equals(title2, that.title2)) return false;

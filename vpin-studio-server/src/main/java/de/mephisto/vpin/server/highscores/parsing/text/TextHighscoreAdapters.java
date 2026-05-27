@@ -76,35 +76,23 @@ public class TextHighscoreAdapters implements InitializingBean {
       return null;
     }
 
-    FileInputStream fileInputStream = null;
-    try {
-      fileInputStream = new FileInputStream(file);
-      List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
-      for (ScoreTextFileAdapter adapter : adapters) {
-        if (adapter.isApplicable(file, lines)) {
-          LOG.info("Converted score with converter class name \"{}\", {} lines.", adapter.getClass().getSimpleName(), lines.size());
-          SLOG.info("Converted score with converter class name \"" + adapter.getClass().getSimpleName() + "\", " + lines.size() + " lines.");
-          return adapter.convert(file, lines);
-        }
+      try (FileInputStream fileInputStream = new FileInputStream(file)) {
+          List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
+          for (ScoreTextFileAdapter adapter : adapters) {
+              if (adapter.isApplicable(file, lines)) {
+                  LOG.info("Converted score with converter class name \"{}\", {} lines.", adapter.getClass().getSimpleName(), lines.size());
+                  SLOG.info("Converted score with converter class name \"" + adapter.getClass().getSimpleName() + "\", " + lines.size() + " lines.");
+                  return adapter.convert(file, lines);
+              }
+          }
+          LOG.info("No parser found for {}, length: {} rows.", file.getName(), lines.size());
+          metadata.setStatus("No parser found for highscore file \"" + file.getName() + "\". Please report this table.");
+      } catch (IOException e) {
+          SLOG.error("Error reading EM highscore file: " + e.getMessage());
+          LOG.error("Error reading EM highscore file: {}", e.getMessage(), e);
       }
-      LOG.info("No parser found for {}, length: {} rows.", file.getName(), lines.size());
-      metadata.setStatus("No parser found for highscore file \"" + file.getName() + "\". Please report this table.");
-    }
-    catch (IOException e) {
-      SLOG.error("Error reading EM highscore file: " + e.getMessage());
-      LOG.error("Error reading EM highscore file: {}", e.getMessage(), e);
-    }
-    finally {
-      if (fileInputStream != null) {
-        try {
-          fileInputStream.close();
-        }
-        catch (IOException e) {
-          //ignore
-        }
-      }
-    }
-    return null;
+      //ignore
+      return null;
   }
 
   public void loadParsers(ScoringDB scoringDatabase) {

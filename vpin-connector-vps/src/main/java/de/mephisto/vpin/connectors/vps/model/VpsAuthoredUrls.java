@@ -106,16 +106,14 @@ public class VpsAuthoredUrls implements VPSEntity {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof VpsAuthoredUrls)) return false;
+    if (!(o instanceof VpsAuthoredUrls that)) return false;
 
-    VpsAuthoredUrls that = (VpsAuthoredUrls) o;
     if (!String.valueOf(version).equals(String.valueOf(that.version))) return false;
     if (urls == null && that.urls != null) return false;
     if (urls != null && that.urls == null) return false;
     if (createdAt != null && !createdAt.equals(that.createdAt)) return false;
     if (createdAt == null && that.createdAt != null) return false;
-    if (urls != null && that.urls != null && !urls.equals(that.urls)) return false;
-    return true;
+    return urls == null || that.urls == null || urls.equals(that.urls);
   }
 
   @Override

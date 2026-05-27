@@ -80,9 +80,8 @@ public class VpsInstallerFromVPF implements VpsInstaller {
         HtmlAnchor linkBtn = downloadPage.querySelector("a.download_button");
 
         Page page = linkBtn.click();
-        if (page instanceof UnexpectedPage) {
-          UnexpectedPage enclosedPage = (UnexpectedPage) page;
-          String attname = enclosedPage.getWebResponse().getResponseHeaderValue("content-disposition");
+        if (page instanceof UnexpectedPage enclosedPage) {
+            String attname = enclosedPage.getWebResponse().getResponseHeaderValue("content-disposition");
           attname = StringUtils.substringBetween(attname, "\"", "\"");
 
           String contentLength = enclosedPage.getWebResponse().getResponseHeaderValue("content-length");

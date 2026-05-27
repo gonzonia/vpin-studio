@@ -814,13 +814,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         return result;
       }
 
-      FileReader fileReader = new FileReader(ini);
-      try {
-        iniConfiguration.read(fileReader);
-      }
-      finally {
-        fileReader.close();
-      }
+        try (FileReader fileReader = new FileReader(ini)) {
+            iniConfiguration.read(fileReader);
+        }
 
       Map<String, String> sectionMappings = new HashMap<>();
       sectionMappings.put("INFO", "Topper");
@@ -2355,13 +2351,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         return result;
       }
 
-      FileReader fileReader = new FileReader(ini);
-      try {
-        iniConfiguration.read(fileReader);
-      }
-      finally {
-        fileReader.close();
-      }
+        try (FileReader fileReader = new FileReader(ini)) {
+            iniConfiguration.read(fileReader);
+        }
 
       Map<String, String> sectionMappings = new HashMap<>();
       sectionMappings.put("INFO", "Topper");

@@ -90,9 +90,7 @@ public class BackupSourceRepresentation {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof BackupSourceRepresentation)) return false;
-
-    BackupSourceRepresentation that = (BackupSourceRepresentation) o;
+    if (!(o instanceof BackupSourceRepresentation that)) return false;
 
     if (id != that.id) return false;
     if (enabled != that.enabled) return false;
@@ -107,7 +105,7 @@ public class BackupSourceRepresentation {
 
   @Override
   public int hashCode() {
-    int result = (int) (id ^ (id >>> 32));
+    int result = Long.hashCode(id);
     result = 31 * result + name.hashCode();
     result = 31 * result + type.hashCode();
     result = 31 * result + location.hashCode();

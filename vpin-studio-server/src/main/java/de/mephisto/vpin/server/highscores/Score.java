@@ -122,11 +122,10 @@ public class Score {
 
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof Score)) {
+    if (!(obj instanceof Score score)) {
       return false;
     }
 
-    Score score = (Score) obj;
     return score.getPlayerInitials().equalsIgnoreCase(this.getPlayerInitials())
         && score.getPosition() == this.getPosition()
         && score.getScore() == this.getScore();

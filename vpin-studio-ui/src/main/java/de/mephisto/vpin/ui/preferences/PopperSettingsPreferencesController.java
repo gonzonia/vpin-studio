@@ -377,9 +377,7 @@ public class PopperSettingsPreferencesController implements Initializable {
     @Override
     public boolean equals(Object o) {
       if (this == o) return true;
-      if (!(o instanceof FadeoutLoading)) return false;
-
-      FadeoutLoading that = (FadeoutLoading) o;
+      if (!(o instanceof FadeoutLoading that)) return false;
 
       return id == that.id;
     }

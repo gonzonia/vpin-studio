@@ -52,12 +52,9 @@ public class WindowsShortcut
   }
 
   public WindowsShortcut(File file) throws IOException, ParseException {
-    InputStream in = new FileInputStream(file);
-    try {
-      parseLink(getBytes(in));
-    } finally {
-      in.close();
-    }
+      try (InputStream in = new FileInputStream(file)) {
+          parseLink(getBytes(in));
+      }
   }
 
   /**
